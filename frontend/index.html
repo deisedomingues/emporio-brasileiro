@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
+
+  <meta
+    name="description"
+    content="Conheça os destaques do Empório Brasileiro,
+    faça sua encomenda e sugira produtos."
+  >
+
+  <meta name="theme-color" content="#183f2e">
+
+  <title>Empório Brasileiro — Seu mercadinho de bairro</title>
+
+  <link rel="stylesheet" href="css/estilo.css">
+
+  <script src="js/pagina-inicial.js" defer></script>
+</head>
+
+<body>
+  <a class="pular-conteudo" href="#conteudo">
+    Ir para o conteúdo
+  </a>
+
+  <!-- Faixa acima da barra de navegação -->
+  <div class="faixa-superior">
+    <div class="conteiner">
+      <span>Seu mercadinho de bairro, desde 2002.</span>
+      <span>São Paulo · SP</span>
+    </div>
+  </div>
+
+  <!-- Cabeçalho -->
+  <header class="cabecalho">
+    <div class="conteiner barra-navegacao">
+
+      <a
+        class="identidade"
+        href="#inicio"
+        aria-label="Empório Brasileiro — início"
+      >
+        <!-- Aqui entrará sua logo -->
+        <span class="espaco-logo" aria-hidden="true">
+          LOGO
+        </span>
+
+        <span class="nome-marca">
+          Empório
+          <span>BRASILEIRO</span>
+        </span>
+      </a>
+
+      <button
+        class="botao botao-discreto botao-menu"
+        id="botao-menu"
+        type="button"
+        aria-expanded="false"
+        aria-controls="navegacao-principal"
+      >
+        Menu
+        <span aria-hidden="true">☰</span>
+      </button>
+
+      <nav
+        class="navegacao-principal"
+        id="navegacao-principal"
+        aria-label="Navegação principal"
+      >
+        <a href="#destaques">Destaques</a>
+        <a href="#como-encomendar">Como encomendar</a>
+        <a href="#sugestoes">Sugerir produto</a>
+        <a href="#contato">O Empório</a>
+
+        <button
+          class="acesso-administrativo"
+          id="abrir-administracao"
+          type="button"
+        >
+          Área administrativa ↗
+        </button>
+      </nav>
+
+    </div>
+  </header>
+
+  <main id="conteudo">
+
+    <!-- Apresentação principal -->
+    <section
+      class="abertura conteiner"
+      id="inicio"
+      aria-labelledby="titulo-inicial"
+    >
+      <div class="texto-abertura">
+
+        <p class="sobretitulo">
+          <span class="ponto" aria-hidden="true"></span>
+          Perto de casa. Perto de você.
+        </p>
+
+        <h1 id="titulo-inicial">
+          O que faz parte<br>
+          do seu dia,<br>
+          <em>tem lugar aqui.</em>
+        </h1>
+
+        <p class="descricao-abertura">
+          Da compra da semana àquele ingrediente especial.
+          Conheça os destaques do Empório e converse com
+          o Sr. Alberto para fazer sua encomenda.
+        </p>
+
+        <div class="grupo-botoes">
+          <button
+            class="botao botao-primario"
+            type="button"
+            data-encomendar
+          >
+            Encomendar pelo WhatsApp ↗
+          </button>
+
+          <a
+            class="botao botao-secundario"
+            href="#destaques"
+          >
+            Ver destaques ↓
+          </a>
+        </div>
+
+        <div class="nota-abertura">
+          <span class="selo-circular" aria-hidden="true">✓</span>
+
+          <p>
+            Atendimento de gente para gente.<br>
+            Você combina tudo diretamente com o Sr. Alberto.
+          </p>
+        </div>
+
+      </div>
+
+      <div class="composicao-abertura">
+
+        <div class="moldura-foto">
+          <img
+            src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&amp;fit=crop&amp;w=1200&amp;q=85"
+            alt="Exposição de frutas e verduras, imagem ilustrativa"
+            width="1200"
+            height="900"
+            fetchpriority="high"
+          >
+
+          <span class="legenda-foto">Imagem ilustrativa</span>
+        </div>
+
+        <div class="etiqueta-foto">
+          <span class="estrela" aria-hidden="true">✳</span>
+
+          <span>
+            Pequeno no tamanho.<br>
+            <strong>Próximo no atendimento.</strong>
+          </span>
+        </div>
+
+        <div class="cartao-abertura">
+          <span class="icone-cartao" aria-hidden="true">↗</span>
+
+          <span>
+            Seu próximo pedido<br>
+            <strong>começa com uma conversa.</strong>
+          </span>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Faixa de benefícios -->
+    <div class="faixa-valores">
+      <div class="conteiner">
+        <span>Compras do dia a dia</span>
+        <span aria-hidden="true">✳</span>
+        <span>Encomendas pelo WhatsApp</span>
+        <span aria-hidden="true">✳</span>
+        <span>Espaço para suas sugestões</span>
+      </div>
+    </div>
+
+    <!-- Produtos escolhidos para a vitrine -->
+    <section
+      class="secao conteiner"
+      id="destaques"
+      aria-labelledby="titulo-destaques"
+    >
+      <div class="cabecalho-secao">
+        <div>
+          <p class="sobretitulo">Na vitrine do Empório</p>
+
+          <h2 id="titulo-destaques">
+            Um pouco do que você<br>
+            pode encontrar por aqui.
+          </h2>
+        </div>
+
+        <p>
+          Uma seleção para inspirar sua próxima compra.<br>
+          Consulte preços e disponibilidade com o Sr. Alberto.
+        </p>
+      </div>
+
+      <div class="linha-filtros">
+
+        <div
+          class="filtros"
+          role="group"
+          aria-label="Filtrar produtos por categoria"
+        >
+          <button
+            class="filtro selecionado"
+            type="button"
+            data-categoria="Todos"
+            aria-pressed="true"
+          >
+            Todos
+          </button>
+
+          <button
+            class="filtro"
+            type="button"
+            data-categoria="Hortifruti"
+            aria-pressed="false"
+          >
+            Hortifruti
+          </button>
+
+          <button
+            class="filtro"
+            type="button"
+            data-categoria="Mercearia"
+            aria-pressed="false"
+          >
+            Mercearia
+          </button>
+
+          <button
+            class="filtro"
+            type="button"
+            data-categoria="Laticínios e frios"
+            aria-pressed="false"
+          >
+            Laticínios e frios
+          </button>
+        </div>
+
+        <span class="aviso-previa">Vitrine de exemplo</span>
+      </div>
+
+      <!-- O JavaScript coloca os produtos aqui -->
+      <div class="grade-produtos" id="grade-produtos"></div>
+
+      <p
+        class="somente-leitor"
+        id="resultado-filtro"
+        aria-live="polite"
+      ></p>
+
+      <noscript>
+        Ative o JavaScript para visualizar os produtos.
+      </noscript>
+
+      <div class="rodape-vitrine">
+        <span>Não encontrou o que estava procurando?</span>
+
+        <a class="ligacao-texto" href="#sugestoes">
+          Conte para a gente ↗
+        </a>
+      </div>
+    </section>
+
+    <!-- Explicação das encomendas -->
+    <section
+      class="faixa-encomenda"
+      id="como-encomendar"
+      aria-labelledby="titulo-encomenda"
+    >
+      <div class="conteiner">
+
+        <div class="cabecalho-secao">
+          <div>
+            <p class="sobretitulo">Simples, como uma conversa</p>
+
+            <h2 id="titulo-encomenda">
+              Você pede.<br>
+              A gente combina.
+            </h2>
+          </div>
+
+          <p>
+            Quer separar alguns produtos para retirar depois?<br>
+            Fale com o Sr. Alberto pelo WhatsApp.
+          </p>
+        </div>
+
+        <div class="etapas">
+
+          <article>
+            <span class="numero-etapa">01</span>
+            <h3>Conte o que precisa</h3>
+
+            <p>
+              Envie os produtos, as quantidades e quando
+              gostaria de retirar.
+            </p>
+          </article>
+
+          <article>
+            <span class="numero-etapa">02</span>
+            <h3>Combine os detalhes</h3>
+
+            <p>
+              O Sr. Alberto confirma a disponibilidade,
+              o valor e a forma de pagamento.
+            </p>
+          </article>
+
+          <article>
+            <span class="numero-etapa">03</span>
+            <h3>Retire sua encomenda</h3>
+
+            <p>
+              Com a confirmação, busque seus produtos
+              no dia e horário combinados.
+            </p>
+          </article>
+
+        </div>
+
+        <button
+          class="botao botao-primario"
+          type="button"
+          data-encomendar
+        >
+          Conversar sobre uma encomenda ↗
+        </button>
+
+      </div>
+    </section>
+
+    <!-- Formulário público de sugestões -->
+    <section
+      class="secao conteiner secao-sugestoes"
+      id="sugestoes"
+      aria-labelledby="titulo-sugestoes"
+    >
+      <div class="texto-sugestoes">
+        <p class="sobretitulo">
+          Sua ideia pode chegar à prateleira
+        </p>
+
+        <h2 id="titulo-sugestoes">
+          O que você gostaria<br>
+          de encontrar <em>aqui?</em>
+        </h2>
+
+        <p>
+          Uma marca que você adora, um ingrediente diferente
+          ou algo que faz falta na sua rotina.
+          Conte para o Sr. Alberto.
+        </p>
+
+        <div class="bilhete">
+          <span aria-hidden="true">✳</span>
+
+          <p>
+            Sugerir não é encomendar.<br>
+
+            <span class="texto-apoio">
+              Você compartilha uma ideia,
+              sem compromisso de compra.
+            </span>
+          </p>
+        </div>
+
+        <p class="texto-apoio">
+          As sugestões serão avaliadas conforme a possibilidade
+          de trazer os produtos. Se quiser, deixe seu contato
+          para receber um aviso.
+        </p>
+      </div>
+
+      <form
+        class="formulario-sugestao"
+        id="formulario-sugestao"
+      >
+        <h3>Deixe sua sugestão</h3>
+
+        <p class="aviso-formulario">
+          Prévia para avaliação: este formulário ainda
+          não envia dados ao Empório.
+        </p>
+
+        <div class="campo">
+          <label for="produto-sugerido">
+            Qual produto você gostaria de encontrar? *
+          </label>
+
+          <input
+            id="produto-sugerido"
+            name="produto"
+            type="text"
+            placeholder="Ex.: bebida de aveia, arroz integral…"
+            maxlength="120"
+            required
+          >
+        </div>
+
+        <div class="campo">
+          <label for="marca-sugerida">
+            Marca de preferência
+            <span class="opcional">(opcional)</span>
+          </label>
+
+          <input
+            id="marca-sugerida"
+            name="marca"
+            type="text"
+            placeholder="Digite a marca, se tiver preferência"
+            maxlength="80"
+          >
+        </div>
+
+        <div class="campo">
+          <label for="aceita-alternativa">
+            Você aceitaria outra marca?
+          </label>
+
+          <select id="aceita-alternativa" name="alternativa">
+            <option value="conhecer">
+              Gostaria de conhecer as opções
+            </option>
+
+            <option value="sim">Sim</option>
+
+            <option value="nao">
+              Não, prefiro a marca indicada
+            </option>
+          </select>
+        </div>
+
+        <label class="opcao-marcacao">
+          <input
+            id="receber-aviso"
+            name="receber_aviso"
+            type="checkbox"
+          >
+
+          <span>Quero ser avisado se o produto chegar.</span>
+        </label>
+
+        <div id="campos-contato" hidden>
+
+          <div class="campo">
+            <label for="nome-cliente">Seu nome *</label>
+
+            <input
+              id="nome-cliente"
+              name="nome"
+              type="text"
+              autocomplete="given-name"
+              maxlength="80"
+              disabled
+            >
+          </div>
+
+          <div class="campo">
+            <label for="telefone-cliente">
+              Seu WhatsApp com DDD *
+            </label>
+
+            <input
+              id="telefone-cliente"
+              name="telefone"
+              type="tel"
+              inputmode="tel"
+              autocomplete="tel"
+              placeholder="(11) 99999-9999"
+              maxlength="22"
+              aria-describedby="ajuda-contato"
+              disabled
+            >
+          </div>
+
+          <p class="texto-apoio" id="ajuda-contato">
+            O contato informado será usado para conversar
+            sobre esta sugestão.
+          </p>
+
+        </div>
+
+        <button
+          class="botao botao-primario botao-largo"
+          type="submit"
+        >
+          Enviar sugestão ↗
+        </button>
+
+        <p
+          class="mensagem-formulario"
+          id="mensagem-formulario"
+          role="status"
+          tabindex="-1"
+        ></p>
+      </form>
+    </section>
+
+    <!-- Apresentação e informações da loja -->
+    <section
+      class="secao-contato"
+      id="contato"
+      aria-labelledby="titulo-contato"
+    >
+      <div class="conteiner grade-contato">
+
+        <div>
+          <p class="sobretitulo">
+            Comércio de bairro, de verdade
+          </p>
+
+          <h2 id="titulo-contato">
+            Empório Brasileiro.<br>
+            <em>Desde 2002, por perto.</em>
+          </h2>
+
+          <p>
+            À frente do Empório, o Sr. Alberto mantém
+            o atendimento próximo de quem conhece o bairro
+            e faz parte do dia a dia dos clientes.
+          </p>
+
+          <button
+            class="botao botao-secundario"
+            type="button"
+            data-encomendar
+          >
+            Falar com o Sr. Alberto ↗
+          </button>
+        </div>
+
+        <div class="informacoes-loja">
+
+          <div>
+            <span class="rotulo-contato">ONDE ESTAMOS</span>
+            <p id="endereco-loja">São Paulo · SP</p>
+
+            <span
+              class="texto-apoio"
+              id="complemento-endereco"
+            >
+              Endereço completo a confirmar.
+            </span>
+          </div>
+
+          <div>
+            <span class="rotulo-contato">
+              HORÁRIO DE ATENDIMENTO
+            </span>
+
+            <p id="horario-loja">Horários a confirmar.</p>
+          </div>
+
+          <div>
+            <span class="rotulo-contato">ATENDIMENTO</span>
+
+            <p>
+              Converse com o Sr. Alberto pelo WhatsApp.
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="rodape">
+    <div class="conteiner">
+      <span class="marca-rodape">Empório Brasileiro</span>
+      <span>Feito para estar perto de você.</span>
+    </div>
+  </footer>
+
+  <!-- Janela reutilizável para avisos -->
+  <dialog
+    class="janela-aviso"
+    id="janela-aviso"
+    aria-labelledby="titulo-aviso"
+    aria-describedby="texto-aviso"
+  >
+    <div class="conteudo-janela">
+
+      <button
+        class="botao-fechar"
+        id="fechar-aviso"
+        type="button"
+        aria-label="Fechar aviso"
+      >
+        ×
+      </button>
+
+      <p class="sobretitulo">Empório Brasileiro</p>
+
+      <h2 id="titulo-aviso"></h2>
+      <p id="texto-aviso"></p>
+
+      <button
+        class="botao botao-primario"
+        id="confirmar-aviso"
+        type="button"
+      >
+        Entendi
+      </button>
+
+    </div>
+  </dialog>
+</body>
+</html>
