@@ -4,7 +4,7 @@
   EMPÓRIO BRASILEIRO — ADMINISTRAÇÃO
 
   Versão inicial para desenvolvimento de interface.
-  Persistência local: localStorage.
+  Categorias, produtos, entradas, fornecedores, compras, encomendas, vendas e sugestões: MongoDB via API.
   Não utilizar em produção com dados pessoais.
 
   Nenhum dado fictício é inserido automaticamente.
@@ -19,6 +19,8 @@ const MENU = [
   ["encomendas", "Encomendas", "encomendas.html"],
   ["vendas", "Vendas", "vendas.html"],
   ["produtos", "Produtos", "produtos.html"],
+  ["compras", "Compras / Entradas", "compras.html"],
+  ["fornecedores", "Fornecedores", "fornecedores.html"],
   ["categorias", "Categorias", "categorias.html"],
   ["sugestoes", "Sugestões", "sugestoes.html"]
 ];
@@ -27,6 +29,8 @@ const TITULOS = {
   painel: ["Visão geral", "Acompanhe os registros do Empório."],
   clientes: ["Clientes", "Gerencie os contatos cadastrados."],
   produtos: ["Produtos", "Organize o catálogo de mercadorias."],
+  compras: ["Compras / Entradas", "Registre vários produtos recebidos em uma única compra."],
+  fornecedores: ["Fornecedores", "Consulte e cadastre fornecedores por CNPJ ou nome."],
   categorias: ["Categorias", "Crie e organize categorias de produtos."],
   encomendas: ["Encomendas", "Registre e acompanhe os pedidos."],
   vendas: ["Vendas", "Registre vendas diretas ou de encomendas."],
@@ -158,18 +162,39 @@ const CAMPOS = {
 // Utilitários e armazenamento temporário
 // --------------------------------------------------
 
+// MongoDB pela API: categorias, produtos e entradas.
+// As demais telas ainda permanecem locais nesta etapa.
+const COLECOES_REMOTAS = ["categorias", "produtos", "entradas", "fornecedores", "compras", "encomendas", "vendas", "sugestoes"];
+const cacheMongo = { categorias: [], produtos: [], entradas: [], fornecedores: [], compras: [], encomendas: [], vendas: [], sugestoes: [] };
+const prontoMongo = { categorias: false, produtos: false, entradas: false, fornecedores: false, compras: false, encomendas: false, vendas: false, sugestoes: false };
 function carregar(colecao) {
-  try {
-    return JSON.parse(localStorage.getItem(PREFIX + colecao)) || [];
-  } catch {
-    return [];
-  }
+  if (COLECOES_REMOTAS.includes(colecao)) return [...cacheMongo[colecao]];
+  try { return JSON.parse(localStorage.getItem(PREFIX + colecao)) || []; }
+  catch { return []; }
 }
-
 function armazenar(colecao, registros) {
+  if (COLECOES_REMOTAS.includes(colecao)) throw Error("Use a API para alterar " + colecao);
   localStorage.setItem(PREFIX + colecao, JSON.stringify(registros));
 }
-
+async function requisicaoMongo(caminho, opcoes = {}) {
+  let resposta;
+  try { resposta = await fetch(caminho, { ...opcoes, headers: { "Content-Type": "application/json", ...(opcoes.headers || {}) } }); }
+  catch { throw Error("Servidor indisponível. Execute npm start e abra http://127.0.0.1:3000/admin/produtos.html"); }
+  let dados = await resposta.json().catch(() => ({}));
+  if (!resposta.ok) throw Error(dados.erro || `Erro HTTP ${resposta.status}`);
+  return dados;
+}
+async function atualizarMongo() {
+  const resultados = await Promise.all(COLECOES_REMOTAS.map(async tipo => {
+    const dados = await requisicaoMongo(`/api/${tipo}`);
+    return { tipo, dados };
+  }));
+  for (const {tipo,dados} of resultados) {
+    cacheMongo[tipo] = dados;
+    prontoMongo[tipo] = true;
+  }
+  renderizar();
+}
 function novoId() {
   return crypto.randomUUID();
 }
@@ -343,17 +368,25 @@ function nomeRelacionado(colecao, id) {
   return carregar(colecao).find(item => item.id === id)?.nome || "—";
 }
 
-function salvarRegistro(colecao, registro) {
+async function salvarRegistro(colecao, registro) {
+  if (COLECOES_REMOTAS.includes(colecao)) {
+    const existente = cacheMongo[colecao].find(r => r.id === registro.id);
+    const caminho = `/api/${colecao}` + (existente ? `/${encodeURIComponent(registro.id)}` : "");
+    const salvo = await requisicaoMongo(caminho, {
+      method: existente ? "PUT" : "POST",
+      body: JSON.stringify(registro)
+    });
+    cacheMongo[colecao] = existente
+      ? cacheMongo[colecao].map(item => item.id === salvo.id ? salvo : item)
+      : [...cacheMongo[colecao], salvo];
+    return salvo;
+  }
   const registros = carregar(colecao);
   const indice = registros.findIndex(item => item.id === registro.id);
-
-  if (indice >= 0) {
-    registros[indice] = registro;
-  } else {
-    registros.push(registro);
-  }
-
+  if (indice >= 0) registros[indice] = registro;
+  else registros.push(registro);
   armazenar(colecao, registros);
+  return registro;
 }
 
 function obterRegistro(colecao, id) {
@@ -380,9 +413,18 @@ function montarLayout() {
           Empório Brasileiro
           <small>ADMINISTRAÇÃO</small>
         </a>
-        <nav class="admin-nav" aria-label="Menu administrativo">
+                <nav class="admin-nav" aria-label="Menu administrativo">
           ${links}
         </nav>
+
+        <button
+          type="button"
+          id="botao-sair-admin"
+          class="botao botao-secundario"
+          style="margin:20px 12px;width:calc(100% - 24px)"
+        >
+          Sair da administração
+        </button>
       </aside>
 
       <main class="admin-main">
@@ -608,7 +650,7 @@ function abrirCadastro(colecao, id = null, valoresIniciais = {}) {
     atualizarApresentacao();
   }
 
-  formulario.onsubmit = evento => {
+  formulario.onsubmit = async evento => {
     evento.preventDefault();
 
     const dados = Object.fromEntries(
@@ -660,10 +702,17 @@ function abrirCadastro(colecao, id = null, valoresIniciais = {}) {
       atualizadoEm: new Date().toISOString()
     };
 
-    salvarRegistro(colecao, registro);
-    fecharDialog();
-    renderizar();
-    mensagem("Registro salvo neste navegador.");
+    try {
+      const salvo = await salvarRegistro(colecao, registro);
+      fecharDialog();
+      renderizar();
+      mensagem("Registro salvo no MongoDB.");
+      if (colecao === "produtos" && !existente) {
+        // Novo produto: abre imediatamente a primeira entrada.
+        abrirEntrada(salvo.id);
+      }
+    } catch (erro) { alert(erro.message); }
+
   };
 
   dialog.showModal();
@@ -783,11 +832,13 @@ function excluirRegistro(colecao, id) {
   }
   if (!confirm("Deseja realmente excluir este registro?")) return;
 
-  armazenar(
-    colecao,
-    carregar(colecao).filter(item => item.id !== id)
-  );
-
+  if (COLECOES_REMOTAS.includes(colecao)) {
+    requisicaoMongo(`/api/${colecao}/${encodeURIComponent(id)}`, {method:"DELETE"})
+      .then(() => {cacheMongo[colecao] = cacheMongo[colecao].filter(x => x.id !== id); renderizar(); mensagem("Registro excluído do MongoDB.");})
+      .catch(erro => alert(erro.message));
+    return;
+  }
+  armazenar(colecao, carregar(colecao).filter(item => item.id !== id));
   renderizar();
   mensagem("Registro excluído deste navegador.");
 }
@@ -913,7 +964,7 @@ function renderizarTabela(colecao) {
                         data-id="${escapar(registro.id)}">
                   ${colecao === "encomendas" && ["Não retirada", "Entregue", "Cancelado"].includes(registro.status) ? "Visualizar itens" : "Editar"}
                 </button>
-                ${colecao === "encomendas" ? "" : `<button class="admin-btn-small admin-btn-danger"
+                ${colecao === "encomendas" || (colecao === "vendas" && registro.encomendaId) ? "" : `<button class="admin-btn-small admin-btn-danger"
                         data-action="excluir"
                         data-id="${escapar(registro.id)}">Excluir</button>`}
                 ${colecao === "encomendas" ? `<button class="admin-btn-small" data-action="mensagem" data-id="${escapar(registro.id)}">Enviar mensagem</button>` : ""}
@@ -997,8 +1048,8 @@ function historicoEntradasHtml(produto) {
         <td>${escapar(entrada.lote || "—")}</td>
         <td>${escapar(mostrarData(entrada.validade))}</td>
         <td>${entrada.custoUnitario == null ? "—" : moeda(entrada.custoUnitario)}</td>
-        <td><button class="admin-btn-small" type="button" data-editar-entrada="${escapar(entrada.id)}">Editar</button>
-        <button class="admin-btn-small admin-btn-danger" type="button" data-excluir-entrada="${escapar(entrada.id)}">Excluir</button></td>
+        <td>${entrada.somenteLeitura ? `<a href="compras.html" class="admin-btn-small">Ver compra #${escapar(entrada.compraId)}</a>` : `<button class="admin-btn-small" type="button" data-editar-entrada="${escapar(entrada.id)}">Editar</button>
+        <button class="admin-btn-small admin-btn-danger" type="button" data-excluir-entrada="${escapar(entrada.id)}">Excluir</button>`}</td>
       </tr>`).join("")}</tbody>
     </table>
   </div>
@@ -1029,7 +1080,7 @@ function abrirEntrada(produtoId, entradaId = null) {
   form.elements.custoUnitario.value = existente?.custoUnitario ?? "";
   form.elements.observacoes.value = existente?.observacoes || "";
 
-  form.onsubmit = evento => {
+  form.onsubmit = async evento => {
     evento.preventDefault();
     const quantidade = Number(form.elements.quantidade.value);
     const custoTexto = form.elements.custoUnitario.value.trim();
@@ -1055,21 +1106,27 @@ function abrirEntrada(produtoId, entradaId = null) {
       criadoEm: existente?.criadoEm || new Date().toISOString(),
       atualizadoEm: new Date().toISOString()
     };
-    salvarRegistro("entradas", entrada);
-    dialog.close();
-    renderizar();
-    exibirProdutoConsultado(produtoId);
-    mensagem("Entrada de mercadoria salva neste navegador.");
+    try {
+      await salvarRegistro("entradas", entrada);
+      dialog.close();
+      renderizar();
+      exibirProdutoConsultado(produtoId);
+      mensagem("Entrada registrada no MongoDB.");
+    } catch (erro) { alert(erro.message); }
+
   };
   dialog.showModal();
 }
 
-function excluirEntrada(entradaId, produtoId) {
-  if (!confirm("Excluir este registro de entrada?")) return;
-  armazenar("entradas", carregar("entradas").filter(e => e.id !== entradaId));
-  renderizar();
-  exibirProdutoConsultado(produtoId);
-  mensagem("Entrada excluída deste navegador.");
+async function excluirEntrada(entradaId, produtoId) {
+  if (!confirm("Excluir este registro de entrada do MongoDB?")) return;
+  try {
+    await requisicaoMongo(`/api/entradas/${encodeURIComponent(entradaId)}`, {method:"DELETE"});
+    cacheMongo.entradas = cacheMongo.entradas.filter(e => e.id !== entradaId);
+    renderizar();
+    exibirProdutoConsultado(produtoId);
+    mensagem("Entrada excluída do MongoDB.");
+  } catch(erro) { alert(erro.message); }
 }
 
 function montarConsultaProdutos() {
@@ -1660,7 +1717,7 @@ function abrirOperacao(colecao, id = null) {
 
   atualizarTotal();
 
-  formulario.onsubmit = evento => {
+  formulario.onsubmit = async evento => {
     evento.preventDefault();
 
     const dados = Object.fromEntries(new FormData(formulario).entries());
@@ -1741,10 +1798,12 @@ function abrirOperacao(colecao, id = null) {
       if (registro.status !== "Disponível" && !existente?.disponivelEm) delete registro.disponivelEm;
     }
 
-    salvarRegistro(colecao, registro);
-    fecharDialog();
-    renderizar();
-    mensagem("Operação salva neste navegador.");
+    try {
+      await salvarRegistro(colecao, registro);
+      fecharDialog();
+      renderizar();
+      mensagem("Operação salva no MongoDB.");
+    } catch (erro) { alert(erro.message); }
   };
 
   dialog.showModal();
@@ -1754,20 +1813,22 @@ function abrirOperacao(colecao, id = null) {
 // Conversão de encomenda em venda
 // --------------------------------------------------
 
-function confirmarNaoRetirada(id) {
+async function confirmarNaoRetirada(id) {
   const encomenda = obterRegistro("encomendas", id);
   const aviso = encomenda ? alertaRetirada(encomenda) : null;
   if (!aviso || aviso.dias < 3) return alert("Prazo ainda não encerrado ou encomenda indisponível.");
   if (!confirm("Confirmar que a encomenda NÃO foi retirada e que os produtos foram liberados para venda? O histórico será preservado.")) return;
-  salvarRegistro("encomendas", {
-    ...encomenda, status: "Não retirada", encerradaEm: new Date().toISOString(),
-    atualizadoEm: new Date().toISOString()
-  });
-  renderizar();
-  mensagem("Encomenda marcada como não retirada. Histórico preservado.");
+  try {
+    await salvarRegistro("encomendas", {
+      ...encomenda, status: "Não retirada", encerradaEm: new Date().toISOString(),
+      atualizadoEm: new Date().toISOString()
+    });
+    renderizar();
+    mensagem("Encomenda marcada como não retirada. Histórico preservado.");
+  } catch (erro) { alert(erro.message); }
 }
 
-function converterEncomenda(id) {
+async function converterEncomenda(id) {
   const encomenda = obterRegistro("encomendas", id);
   if (!encomenda) return;
 
@@ -1800,9 +1861,11 @@ function converterEncomenda(id) {
     atualizadoEm: new Date().toISOString()
   };
 
-  salvarRegistro("vendas", venda);
-  renderizar();
-  mensagem("Venda registrada a partir da encomenda.");
+  try {
+    await salvarRegistro("vendas", venda);
+    renderizar();
+    mensagem("Venda registrada a partir da encomenda no MongoDB.");
+  } catch (erro) { alert(erro.message); }
 }
 
 // --------------------------------------------------
@@ -1885,6 +1948,190 @@ function renderizarPainel() {
   `;
 }
 
+
+// --------------------------------------------------
+// Fornecedores e compras agrupadas
+// --------------------------------------------------
+const modeloCompra = () => ({ produtoId:"", texto:"", quantidade:1, custoUnitario:"", lote:"", validade:"" });
+let itensCompra = [modeloCompra()];
+let fornecedorCompraId = "";
+let buscaCompra = "";
+let limiteCompras = 3;
+
+function cssCompras() {
+  if (document.getElementById("css-compras")) return;
+  const estilo = document.createElement("style");
+  estilo.id = "css-compras";
+  estilo.textContent = `
+  .comp-grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+  .comp-campo {display:flex;flex-direction:column;gap:6px;min-width:0}
+  .comp-campo input,.comp-campo select {width:100%;min-width:0;padding:12px;border:1px solid #bacbc0;border-radius:9px;background:#fff;font:inherit}
+  .comp-full {grid-column:1 / -1}
+  .comp-item {padding:16px;border:1px solid #d6e1d7;border-radius:12px;margin:12px 0;background:#fff}
+  .comp-acoes {display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:16px}
+  .comp-hint {font-size:.88rem;color:#53675b}
+  .comp-item-top {display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .comp-sugestoes {display:flex;flex-direction:column;gap:4px;max-height:210px;overflow:auto}
+  .comp-sugestoes button {padding:10px;text-align:left;background:#f2f7eb;border:1px solid #dce5d1;border-radius:7px;cursor:pointer;color:#183f2e}
+  .comp-muted {color:#54665a;font-size:.92rem}
+  @media(max-width:650px){.comp-grid{grid-template-columns:1fr}.comp-full{grid-column:auto}}
+  `;
+  document.head.append(estilo);
+}
+function validarCnpjBasico(texto) {return String(texto).replace(/\D/g,"");}
+function exibirFornecedorNome(id) {
+  const f = carregar("fornecedores").find(x => x.id === String(id));
+  return f ? f.nome + (f.cnpj ? ` · ${f.cnpj}` : "") : "Fornecedor não identificado";
+}
+function abrirCadastroFornecedor(id = null, aoSalvar = null) {
+  const atual = id ? obterRegistro("fornecedores", id) : null;
+  const dialog = document.querySelector("#dialog-cadastro");
+  const form = document.querySelector("#form-cadastro");
+  document.querySelector("#titulo-dialog").textContent = atual ? "Editar fornecedor" : "Cadastrar fornecedor";
+  document.querySelector("#campos-dialog").innerHTML = `
+    <div class="comp-grid">
+      <label class="comp-campo">Tipo de fornecedor *
+        <select name="tipo" id="fornecedor-tipo"><option value="PJ" ${atual?.tipo!=="PF"?"selected":""}>Empresa (CNPJ)</option><option value="PF" ${atual?.tipo==="PF"?"selected":""}>Pessoa física</option></select></label>
+      <label class="comp-campo">Nome / razão social *<input name="nome" required maxlength="160" value="${escapar(atual?.nome||"")}"></label>
+      <label class="comp-campo" id="campo-cnpj">CNPJ *<input name="cnpj" inputmode="numeric" maxlength="18" placeholder="Somente números" value="${escapar(atual?.cnpj||"")}"></label>
+      <label class="comp-campo">Telefone (opcional)<input name="telefone" maxlength="30" value="${escapar(atual?.telefone||"")}"></label>
+      <label class="comp-campo comp-full"><span><input type="checkbox" name="ativo" ${atual?.ativo===false?"":"checked"}> Fornecedor ativo</span></label>
+    </div>`;
+  document.querySelector('#form-cadastro button[type="submit"]').hidden=false;
+  document.querySelector("#cancelar-dialog").textContent="Cancelar";
+  function atualizarTipo() {
+    form.elements.cnpj.disabled=form.elements.tipo.value==="PF";
+    form.elements.cnpj.required=form.elements.tipo.value==="PJ";
+    form.elements.cnpj.closest("label").hidden=form.elements.tipo.value==="PF";
+  }
+  form.elements.tipo.onchange=atualizarTipo;
+  atualizarTipo();
+  form.onsubmit=async ev=>{
+    ev.preventDefault();
+    const registro={tipo:form.elements.tipo.value,nome:form.elements.nome.value.trim(),cnpj:validarCnpjBasico(form.elements.cnpj.value),telefone:form.elements.telefone.value.trim(),ativo:form.elements.ativo.checked};
+    try {
+      const salvo=await requisicaoMongo(`/api/fornecedores${atual?"/"+atual.id:""}`,{method:atual?"PUT":"POST",body:JSON.stringify(registro)});
+      cacheMongo.fornecedores=await requisicaoMongo("/api/fornecedores");
+      dialog.close();
+      if(aoSalvar)aoSalvar(salvo);
+      if (PAGE === "fornecedores") renderizar();
+      if (PAGE === "compras" && aoSalvar) {
+        fornecedorCompraId = salvo.id;
+        document.querySelector("#comp-fornecedor").value = exibirFornecedorNome(salvo.id);
+        document.querySelector("#fornecedor-selecionado").textContent = "Fornecedor cadastrado e selecionado.";
+      }
+      mensagem("Fornecedor salvo no MongoDB.");
+    } catch(erro){alert(erro.message);}
+  };
+  dialog.showModal();
+}
+function renderizarFornecedores() {
+  cssCompras();
+  document.querySelector("#acoes-pagina").innerHTML='<button class="botao botao-primario" id="novo-fornecedor">+ Novo fornecedor</button>';
+  const fornecedores=carregar("fornecedores");
+  document.querySelector("#conteudo-pagina").innerHTML=`<section class="admin-card">
+    <label class="comp-campo">Buscar por nome ou CNPJ<input id="pesquisa-fornecedor" type="search" placeholder="Digite nome ou CNPJ" autocomplete="off"></label>
+    <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Fornecedor</th><th>Tipo</th><th>CNPJ</th><th>Situação</th><th>Ação</th></tr></thead>
+    <tbody id="linhas-fornecedor">${fornecedores.map(f=>`<tr><td>${escapar(f.nome)}</td><td>${f.tipo}</td><td>${escapar(f.cnpj||"—")}</td><td>${f.ativo?"Ativo":"Inativo"}</td><td><button class="admin-btn-small" data-fornecedor="${escapar(f.id)}">Editar</button></td></tr>`).join("")}</tbody></table></div>
+    <p class="comp-muted">${fornecedores.length} fornecedor(es)</p></section>`;
+  document.querySelector("#novo-fornecedor").onclick=()=>abrirCadastroFornecedor();
+  const linhas=[...document.querySelectorAll("#linhas-fornecedor tr")];
+  document.querySelector("#pesquisa-fornecedor").oninput=e=>{const q=e.target.value.toLocaleLowerCase("pt-BR").replace(/\D/g,"");const raw=e.target.value.toLocaleLowerCase("pt-BR");linhas.forEach(tr=>tr.hidden=!tr.textContent.toLocaleLowerCase("pt-BR").includes(raw)&&!(q&&tr.textContent.replace(/\D/g,"").includes(q)));};
+  document.querySelector("#linhas-fornecedor").onclick=e=>{const b=e.target.closest("[data-fornecedor]");if(b)abrirCadastroFornecedor(b.dataset.fornecedor);};
+}
+function resumoCompra(c) {
+  return `${c.itens.length} produto(s) · ${moeda(c.total)}`;
+}
+function renderizarCompras() {
+  cssCompras();
+  const compras=carregar("compras");
+  document.querySelector("#acoes-pagina").innerHTML='';
+  document.querySelector("#conteudo-pagina").innerHTML=`
+    <section class="admin-card"><h2>Registrar compra</h2><p class="comp-muted">Cadastre o fornecedor uma vez e inclua todos os produtos da compra.</p>
+      <form id="form-compra">
+        <div class="comp-grid">
+          <label class="comp-campo">Data da compra *<input type="date" name="data" required value="${dataAtual()}"></label>
+          <label class="comp-campo">Tipo de documento *<select name="tipoDocumento"><option>NF-e</option><option>NFC-e</option><option>Cupom fiscal</option><option>Recibo</option><option>Sem documento</option></select></label>
+          <label class="comp-campo" id="numero-documento">Número da nota / cupom *<input name="numeroDocumento" maxlength="80" required placeholder="Número do documento"></label>
+          <div class="comp-campo comp-full"><label for="comp-fornecedor">Fornecedor (CNPJ ou nome) *</label><input id="comp-fornecedor" autocomplete="off" placeholder="Digite o CNPJ ou nome"><div id="lista-fornecedores" class="comp-sugestoes"></div>
+          <button type="button" class="botao botao-secundario" id="criar-fornecedor">+ Cadastrar novo fornecedor</button><span id="fornecedor-selecionado" class="comp-hint"></span></div>
+        </div>
+        <h3 style="margin-top:22px">Produtos recebidos</h3><div id="lista-itens-compra"></div>
+        <div class="comp-acoes"><button type="button" id="adicionar-item" class="botao botao-secundario">+ Adicionar produto</button>
+        <button type="button" id="atualizar-produtos" class="botao botao-secundario">Atualizar catálogo</button>
+        <span class="comp-muted">Produto novo? <a href="produtos.html" target="_blank" rel="noopener">Cadastrar produto em outra aba</a> e volte para atualizar.</span></div>
+        <div class="comp-acoes" style="justify-content:space-between"><strong id="total-compra">Total: R$ 0,00</strong><button class="botao botao-primario" type="submit" id="salvar-compra">Salvar compra</button></div>
+      </form></section>
+    <section class="admin-card"><h2>Compras registradas</h2><input id="pesquisa-compras" type="search" placeholder="Buscar compra, fornecedor, produto ou documento" value="${escapar(buscaCompra)}" style="width:100%;padding:12px">
+      <div id="lista-compras">${compras.map((c,indice)=>`<details class="comp-registro" data-busca="${escapar([c.id,c.data,c.documento?.numero,exibirFornecedorNome(c.fornecedorId),...c.itens.map(i=>obterRegistro("produtos",i.produtoId)?.nome||"")].join(" ").toLocaleLowerCase("pt-BR"))}" style="border-bottom:1px solid #dae1d8;padding:12px 0" ${indice>=limiteCompras?"hidden":""}><summary style="cursor:pointer"><strong>#${escapar(c.id)}</strong> · ${mostrarData(c.data)} · ${escapar(exibirFornecedorNome(c.fornecedorId))} — ${moeda(c.total)}</summary>
+        <p>${escapar(c.documento?.tipo||"")} ${escapar(c.documento?.numero||"")}</p><ul>${c.itens.map(i=>`<li>${escapar(obterRegistro("produtos",i.produtoId)?.nome||"Produto #"+i.produtoId)} — ${escapar(i.quantidade)} ${obterRegistro("produtos",i.produtoId)?.formaVenda==="Quilograma"?"kg":"un"} × ${moeda(i.custoUnitario)}</li>`).join("")}</ul></details>`).join("")||'<p class="comp-muted">Nenhuma compra encontrada.</p>'}</div>
+      ${compras.length>3?'<button type="button" id="alternar-compras" class="botao botao-secundario" style="margin-top:14px">Ver todos</button>':''}
+    </section>`;
+  const form=document.querySelector("#form-compra");
+  function atualizarDocumento(){const sem=form.elements.tipoDocumento.value==="Sem documento";form.elements.numeroDocumento.required=!sem;document.querySelector("#numero-documento").hidden=sem;if(sem)form.elements.numeroDocumento.value="";}
+  form.elements.tipoDocumento.onchange=atualizarDocumento;atualizarDocumento();
+  const fornecedorInput=document.querySelector("#comp-fornecedor");
+  fornecedorInput.value=fornecedorCompraId?exibirFornecedorNome(fornecedorCompraId):"";
+  function buscarFornecedor(){
+    const q=fornecedorInput.value.trim().toLocaleLowerCase("pt-BR");const numeros=q.replace(/\D/g,"");
+    document.querySelector("#lista-fornecedores").innerHTML=q?carregar("fornecedores").filter(f=>f.ativo&&(f.nome.toLocaleLowerCase("pt-BR").includes(q)||(numeros&&f.cnpj.includes(numeros)))).slice(0,8).map(f=>`<button type="button" data-id="${escapar(f.id)}">${escapar(f.nome)} ${f.cnpj?"· "+escapar(f.cnpj):"(PF)"}</button>`).join(""):"";
+  }
+  fornecedorInput.oninput=()=>{fornecedorCompraId="";buscarFornecedor();};
+  document.querySelector("#lista-fornecedores").onclick=e=>{const b=e.target.closest("[data-id]");if(!b)return;fornecedorCompraId=b.dataset.id;fornecedorInput.value=exibirFornecedorNome(fornecedorCompraId);document.querySelector("#lista-fornecedores").innerHTML="";document.querySelector("#fornecedor-selecionado").textContent="Fornecedor selecionado.";};
+  document.querySelector("#criar-fornecedor").onclick=()=>abrirCadastroFornecedor(null,()=>{});
+  document.querySelector("#adicionar-item").onclick=()=>{itensCompra.push(modeloCompra());montarItensCompra();};
+  document.querySelector("#atualizar-produtos").onclick=async()=>{try{cacheMongo.produtos=await requisicaoMongo("/api/produtos");montarItensCompra();mensagem("Catálogo atualizado.");}catch(e){alert(e.message);}};
+  const pesquisar=document.querySelector("#pesquisa-compras");
+  const alternar=document.querySelector("#alternar-compras");
+  function aplicarFiltroCompras() {
+    const q=pesquisar.value.trim().toLocaleLowerCase("pt-BR");
+    const registros=[...document.querySelectorAll(".comp-registro")];
+    registros.forEach((el,i)=>el.hidden = q ? !el.dataset.busca.includes(q) : (i>=limiteCompras));
+    if(alternar){alternar.hidden=Boolean(q);alternar.textContent=limiteCompras===3?"Ver todos":"Recolher";}
+  }
+  pesquisar.oninput=()=>{buscaCompra=pesquisar.value;aplicarFiltroCompras();};
+  if(alternar)alternar.onclick=()=>{limiteCompras=limiteCompras===3?compras.length:3;aplicarFiltroCompras();};
+  aplicarFiltroCompras();
+  montarItensCompra();
+  form.onsubmit=async ev=>{
+    ev.preventDefault();
+    if(!fornecedorCompraId)return alert("Selecione um fornecedor na lista ou cadastre um novo.");
+    const itens=itensCompra.map(x=>({produtoId:x.produtoId,quantidade:Number(x.quantidade),custoUnitario:Number(x.custoUnitario),lote:x.lote,validade:x.validade}));
+    if(itens.some((i,indice)=>!i.produtoId||!Number.isFinite(i.quantidade)||i.quantidade<=0||!Number.isFinite(i.custoUnitario)||i.custoUnitario<0||String(itensCompra[indice].custoUnitario).trim()===""))return alert("Selecione cada produto e informe quantidade e custo.");
+    const botao=document.querySelector("#salvar-compra");botao.disabled=true;
+    try{
+      await requisicaoMongo("/api/compras",{method:"POST",body:JSON.stringify({fornecedorId:fornecedorCompraId,data:form.elements.data.value,documento:{tipo:form.elements.tipoDocumento.value,numero:form.elements.numeroDocumento.value.trim()},itens})});
+      cacheMongo.compras=await requisicaoMongo("/api/compras");
+      cacheMongo.entradas=await requisicaoMongo("/api/entradas");
+      itensCompra=[modeloCompra()];fornecedorCompraId="";buscaCompra="";limiteCompras=3;renderizarCompras();mensagem("Compra salva no MongoDB, com histórico por produto.");
+    }catch(e){alert(e.message);botao.disabled=false;}
+  };
+}
+function montarItensCompra() {
+  const lista=document.querySelector("#lista-itens-compra");if(!lista)return;
+  lista.innerHTML=itensCompra.map((item,i)=>`<article class="comp-item" data-item="${i}">
+    <div class="comp-item-top"><strong>Item ${i+1}</strong><button type="button" class="admin-btn-small admin-btn-danger" data-remover="${i}" ${itensCompra.length===1?"disabled":""}>Remover</button></div>
+    <div class="comp-grid"><div class="comp-campo comp-full"><label>Produto *</label><input type="search" data-campo="texto" placeholder="Nome, marca ou código" autocomplete="off" value="${escapar(item.texto)}"><div class="comp-sugestoes" data-sugestoes="${i}"></div></div>
+    <label class="comp-campo">Quantidade *<input type="number" data-campo="quantidade" min="0.001" step="0.001" required value="${escapar(item.quantidade)}"></label>
+    <label class="comp-campo">Custo unitário (R$) *<input type="number" data-campo="custoUnitario" min="0" step="0.01" required value="${escapar(item.custoUnitario)}"></label>
+    <label class="comp-campo">Lote (opcional)<input data-campo="lote" maxlength="100" value="${escapar(item.lote)}"></label>
+    <label class="comp-campo">Validade (opcional)<input type="date" data-campo="validade" value="${escapar(item.validade)}"></label></div></article>`).join("");
+  lista.oninput=e=>{const input=e.target.closest("[data-campo]");if(!input)return;const i=Number(input.closest("[data-item]").dataset.item),campo=input.dataset.campo;itensCompra[i][campo]=input.value;
+    if(campo==="texto"){itensCompra[i].produtoId="";sugerirProdutosCompra(i,input);}else{atualizarTotalCompra();}};
+  lista.onfocusin=e=>{const input=e.target.closest('[data-campo="texto"]');if(input)sugerirProdutosCompra(Number(input.closest("[data-item]").dataset.item),input);};
+  lista.onclick=e=>{const remove=e.target.closest("[data-remover]");if(remove){itensCompra.splice(Number(remove.dataset.remover),1);montarItensCompra();return;}
+    const escolha=e.target.closest("[data-escolha]");if(escolha){const i=Number(escolha.closest("[data-item]").dataset.item);const p=obterRegistro("produtos",escolha.dataset.escolha);if(!p)return;itensCompra[i].produtoId=p.id;itensCompra[i].texto=p.nome+(p.marca?" · "+p.marca:"");montarItensCompra();}};
+  atualizarTotalCompra();
+}
+function sugerirProdutosCompra(i,input) {
+  const q=input.value.trim().toLocaleLowerCase("pt-BR");const lista=input.closest("[data-item]").querySelector("[data-sugestoes]");
+  lista.innerHTML=q?carregar("produtos").filter(p=>p.ativo!==false&&[p.nome,p.marca,p.codigoBarras,p.codigoInterno].some(v=>String(v||"").toLocaleLowerCase("pt-BR").includes(q))).slice(0,8).map(p=>`<button type="button" data-escolha="${escapar(p.id)}">${escapar(p.nome)} ${p.marca?"· "+escapar(p.marca):""}</button>`).join(""):"";
+}
+function atualizarTotalCompra() {
+  const soma=itensCompra.reduce((s,i)=>s+(Number(i.quantidade)||0)*(Number(i.custoUnitario)||0),0);
+  const el=document.querySelector("#total-compra");if(el)el.textContent="Total: "+moeda(soma);
+}
+
 // --------------------------------------------------
 // Inicialização
 // --------------------------------------------------
@@ -1892,6 +2139,10 @@ function renderizarPainel() {
 function renderizar() {
   if (PAGE === "painel") {
     renderizarPainel();
+  } else if (PAGE === "fornecedores") {
+    renderizarFornecedores();
+  } else if (PAGE === "compras") {
+    renderizarCompras();
   } else {
     renderizarListagem(PAGE);
   }
@@ -1901,5 +2152,35 @@ if (!APP || !TITULOS[PAGE]) {
   console.error("Página administrativa não reconhecida.");
 } else {
   montarLayout();
-  renderizar();
+  document.querySelector("#conteudo-pagina").innerHTML = "<p>Carregando dados do MongoDB...</p>";
+  atualizarMongo().catch(erro => {
+    document.querySelector("#conteudo-pagina").innerHTML =
+      `<div class="admin-card"><h2>Não foi possível carregar o MongoDB</h2><p>${escapar(erro.message)}</p><p>Execute <code>npm start</code> e abra a página pela porta 3000.</p></div>`;
+  });
 }
+// Encerrar sessão administrativa
+
+document.addEventListener("click", async evento => {
+
+  if (!evento.target.closest("#botao-sair-admin")) {
+    return;
+  }
+
+  try {
+    const resposta = await fetch("/api/auth/logout", {
+      method: "POST",
+      credentials: "same-origin"
+    });
+
+    if (!resposta.ok) {
+      throw new Error(
+        "Não foi possível encerrar a sessão."
+      );
+    }
+
+    window.location.assign("/login.html");
+
+  } catch (erro) {
+    alert(erro.message);
+  }
+});

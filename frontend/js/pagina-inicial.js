@@ -119,18 +119,6 @@ document
   .querySelector("#confirmar-aviso")
   .addEventListener("click", fecharAviso);
 
-/* Ainda não há login nesta primeira versão */
-document
-  .querySelector("#abrir-administracao")
-  .addEventListener("click", () => {
-    mostrarAviso(
-      "Área administrativa",
-
-      "O acesso do Sr. Alberto será implementado " +
-      "na próxima etapa. Esta prévia apresenta " +
-      "a página pública; ainda não há login disponível."
-    );
-  });
 
 /* ==========================================
    WHATSAPP

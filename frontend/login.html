@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#183f2e">
+  <title>Entrar | Empório Brasileiro</title>
+
+  <link rel="stylesheet" href="/frontend/css/estilo.css">
+
+  <style>
+    body {
+      background: #fcfcf7;
+      min-height: 100vh;
+      margin: 0;
+      color: #183f2e;
+      font-family: Arial, sans-serif;
+    }
+
+    .login-container {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 28px 16px;
+    }
+
+    .login-card {
+      box-sizing: border-box;
+      width: min(100%, 420px);
+      background: #fff;
+      border: 1px solid #d9e3d8;
+      border-radius: 18px;
+      padding: 36px;
+      box-shadow: 0 18px 45px #183f2e13;
+    }
+
+    .logo {
+      font-family: Georgia, serif;
+      font-size: 25px;
+      font-weight: 700;
+      text-decoration: none;
+      color: #183f2e;
+    }
+
+    h1 {
+      font-family: Georgia, serif;
+      font-size: 32px;
+      line-height: 1.1;
+      margin: 32px 0 8px;
+    }
+
+    p {
+      color: #53625c;
+      line-height: 1.5;
+      margin: 0 0 28px;
+    }
+
+    label {
+      display: block;
+      font-weight: 700;
+      font-size: 14px;
+      margin: 17px 0 7px;
+    }
+
+    input {
+      box-sizing: border-box;
+      width: 100%;
+      border: 1px solid #aebeb4;
+      border-radius: 10px;
+      padding: 13px;
+      font-size: 16px;
+      background: #fff;
+      color: #142f22;
+    }
+
+    input:focus {
+      outline: 2px solid #5b806b;
+      outline-offset: 2px;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 24px;
+      border: 0;
+      border-radius: 10px;
+      background: #183f2e;
+      color: white;
+      font-weight: 700;
+      font-size: 16px;
+      padding: 15px;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: .7;
+      cursor: wait;
+    }
+
+    .erro {
+      min-height: 24px;
+      color: #a12c25;
+      font-size: 14px;
+      margin-top: 12px;
+    }
+
+    .voltar {
+      display: block;
+      text-align: center;
+      margin-top: 20px;
+      color: #183f2e;
+      text-decoration: underline;
+    }
+
+    @media (max-width: 450px) {
+      .login-card {
+        padding: 25px;
+      }
+    }
+  </style>
+
+  <script src="/frontend/js/login.js" defer></script>
+</head>
+
+<body>
+  <main class="login-container">
+    <section class="login-card" aria-labelledby="titulo-login">
+
+      <a class="logo" href="/frontend/index.html">
+        Empório Brasileiro
+      </a>
+
+      <h1 id="titulo-login">Área administrativa</h1>
+
+      <p>Entre para gerenciar o Empório.</p>
+
+      <form id="form-login">
+
+        <label for="usuario">Usuário</label>
+        <input
+          id="usuario"
+          name="usuario"
+          type="text"
+          autocomplete="username"
+          maxlength="80"
+          required
+          autofocus
+        >
+
+        <label for="senha">Senha</label>
+        <input
+          id="senha"
+          name="senha"
+          type="password"
+          autocomplete="current-password"
+          required
+        >
+
+        <button id="entrar" type="submit">
+          Entrar
+        </button>
+
+        <div
+          class="erro"
+          id="erro-login"
+          role="alert"
+          aria-live="polite"
+        ></div>
+
+      </form>
+
+      <a class="voltar" href="/frontend/index.html">
+        Voltar ao Empório
+      </a>
+
+    </section>
+  </main>
+</body>
+</html>
