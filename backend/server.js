@@ -174,6 +174,81 @@ function exigirLoginPagina(req,res,next) {
   res.set("Cache-Control","no-store");
   next();
 }
+// API pública: retorna apenas dados próprios da vitrine, nunca campos administrativos.
+app.get("/api/publico/produtos", async (_req, res) => {
+  try {
+    const produtos = await db.collection("produto")
+      .find({ ativo: true, exibir_landing: true })
+      .sort({ id_produto: -1 })
+      .project({ _id: 0, id_produto: 1, nome: 1, marca: 1,
+        id_categoria: 1, apresentacao: 1, forma_venda: 1 })
+      .toArray();
+    const categorias = await db.collection("categoria")
+      .find({ ativo: true })
+      .project({ _id: 0, id_categoria: 1, nome: 1 })
+      .toArray();
+    const nomes = new Map(categorias.map(c => [c.id_categoria, c.nome]));
+    res.set("Cache-Control", "no-store");
+    res.json(produtos.map(p => ({
+      id: p.id_produto,
+      nome: p.nome,
+      marca: p.marca || "",
+      categoria: nomes.get(p.id_categoria) || "Outros",
+      apresentacao: p.apresentacao || null,
+      forma_venda: p.forma_venda
+    })));
+  } catch (erro) {
+    console.error("Vitrine:", erro.message);
+    res.status(500).json({ erro: "Não foi possível carregar a vitrine." });
+  }
+});
+
+// Limite simples por IP para reduzir envio excessivo de sugestões no ambiente local.
+const enviosPublicos = new Map();
+app.post("/api/publico/sugestoes", async (req, res) => {
+  try {
+    const agora = Date.now();
+    const chave = req.ip;
+    const registro = enviosPublicos.get(chave);
+    const periodo = 15 * 60 * 1000;
+    const limite = registro && agora - registro.inicio < periodo
+      ? registro : { inicio: agora, quantidade: 0 };
+    if (limite.quantidade >= 5) {
+      return res.status(429).json({ erro: "Limite de sugestões atingido. Tente novamente mais tarde." });
+    }
+    const entrada = req.body;
+    if (!entrada || typeof entrada !== "object" || Array.isArray(entrada)) {
+      return res.status(400).json({ erro: "Formulário inválido." });
+    }
+    const produto = String(entrada.produto || "").trim();
+    const marca = String(entrada.marca || "").trim();
+    const aceita = String(entrada.aceitaAlternativa || "Não informado");
+    const receber = entrada.receberAviso === true;
+    const nome = receber ? String(entrada.nomeSolicitante || "").trim() : "";
+    const digitos = receber ? String(entrada.telefone || "").replace(/\D/g, "") : "";
+    const telefone = digitos.startsWith("55") && (digitos.length === 12 || digitos.length === 13)
+      ? digitos.slice(2) : digitos;
+    if (produto.length < 2 || produto.length > 120 || marca.length > 80 ||
+        !["Sim", "Não", "Não informado"].includes(aceita)) {
+      return res.status(400).json({ erro: "Confira os dados do produto sugerido." });
+    }
+    if (receber && (!nome || nome.length > 80 || !/^\d{10,11}$/.test(telefone))) {
+      return res.status(400).json({ erro: "Informe nome e telefone com DDD para receber avisos." });
+    }
+    const salvo = await proximoDocumento("sugestao", "id_sugestao", {
+      produto, marca, nome_solicitante: nome, telefone,
+      aceita_alternativa: aceita, receber_aviso: receber,
+      status: "Recebida", observacoes: "", data: new Date().toISOString().slice(0, 10)
+    }, sugestaoTela);
+    limite.quantidade++;
+    enviosPublicos.set(chave, limite);
+    res.status(201).json({ ok: true, protocolo: salvo.id });
+  } catch (erro) {
+    console.error("Sugestão pública:", erro.message);
+    res.status(500).json({ erro: "Não foi possível registrar sua sugestão." });
+  }
+});
+
 // Protege TODAS as rotas administrativas criadas abaixo, inclusive leituras.
 app.use("/api",exigirLoginApi);
 for (const [tipo, config] of Object.entries(configs)) {

@@ -1,505 +1,196 @@
 "use strict";
 
-/* ==========================================
-   CONFIGURAÇÕES DA LOJA
-
-   Quando tiver o telefone oficial, preencha
-   com país + DDD + número, somente dígitos.
-
-   Não coloque senhas ou dados de conexão
-   ao MongoDB neste arquivo.
-   ========================================== */
-
-const configuracoes = {
-  whatsapp: "",
-  endereco: "",
-  horario: ""
-};
-
-/* ==========================================
-   PRODUTOS DE EXEMPLO
-
-   Futuramente, estes dados virão do backend.
-
-   exibir_na_landing: true  -> aparece
-   exibir_na_landing: false -> não aparece
-
-   As marcas estão vazias porque estes são
-   exemplos, sem marca real definida.
-   ========================================== */
-
-const produtos = [
-  {
-    id: "morango",
-    nome: "Morango",
-    marca: "",
-    categoria: "Hortifruti",
-    apresentacao: "Bandeja · 250 g",
-
-    imagem:
-      "https://images.unsplash.com/" +
-      "photo-1464965911861-746a04b4bca6" +
-      "?auto=format&fit=crop&w=640&q=85",
-
-    descricaoImagem: "Morangos frescos, foto ilustrativa",
-    exibir_na_landing: true
-  },
-
-  {
-    id: "arroz",
-    nome: "Arroz branco",
-    marca: "",
-    categoria: "Mercearia",
-    apresentacao: "Pacote · 5 kg",
-
-    imagem:
-      "https://images.unsplash.com/" +
-      "photo-1586201375761-83865001e31c" +
-      "?auto=format&fit=crop&w=640&q=85",
-
-    descricaoImagem: "Grãos de arroz, foto ilustrativa",
-    exibir_na_landing: true
-  },
-
-  {
-    id: "cafe",
-    nome: "Café torrado e moído",
-    marca: "",
-    categoria: "Mercearia",
-    apresentacao: "Pacote · 500 g",
-
-    imagem:
-      "https://images.unsplash.com/" +
-      "photo-1447933601403-0c6688de566e" +
-      "?auto=format&fit=crop&w=640&q=85",
-
-    descricaoImagem: "Grãos de café, foto ilustrativa",
-    exibir_na_landing: true
-  },
-
-  {
-    id: "leite",
-    nome: "Leite integral",
-    marca: "",
-    categoria: "Laticínios e frios",
-    apresentacao: "Caixa · 1 L",
-
-    imagem:
-      "https://images.unsplash.com/" +
-      "photo-1563636619-e9143da7973b" +
-      "?auto=format&fit=crop&w=640&q=85",
-
-    descricaoImagem: "Leite em recipiente, foto ilustrativa",
-    exibir_na_landing: true
-  }
-];
-
-/* ==========================================
-   JANELA DE AVISOS
-   ========================================== */
-
+// Informações da loja: preencher o WhatsApp oficial quando confirmado.
+const configuracoes = { whatsapp: "", endereco: "", horario: "" };
 const janelaAviso = document.querySelector("#janela-aviso");
-
 function mostrarAviso(titulo, texto) {
   document.querySelector("#titulo-aviso").textContent = titulo;
   document.querySelector("#texto-aviso").textContent = texto;
-
   janelaAviso.showModal();
 }
-
-function fecharAviso() {
-  janelaAviso.close();
-}
-
-document
-  .querySelector("#fechar-aviso")
-  .addEventListener("click", fecharAviso);
-
-document
-  .querySelector("#confirmar-aviso")
-  .addEventListener("click", fecharAviso);
-
-
-/* ==========================================
-   WHATSAPP
-   ========================================== */
+function fecharAviso() { janelaAviso.close(); }
+document.querySelector("#fechar-aviso").addEventListener("click", fecharAviso);
+document.querySelector("#confirmar-aviso").addEventListener("click", fecharAviso);
 
 function abrirWhatsApp(mensagem) {
-  // Remove espaços, parênteses e outros caracteres.
   const telefone = configuracoes.whatsapp.replace(/\D/g, "");
-
-  // Confere se há código do Brasil, DDD e número.
   if (!/^55\d{10,11}$/.test(telefone)) {
-    mostrarAviso(
-      "Contato em preparação",
-
-      "O número oficial do Empório ainda precisa " +
-      "ser confirmado. Assim que ele for cadastrado, " +
-      "este botão abrirá a conversa com o Sr. Alberto."
-    );
-
+    mostrarAviso("Contato em preparação", "O número oficial do Empório ainda precisa ser confirmado.");
     return;
   }
-
-  // Preenche a mensagem; o visitante decide enviá-la.
-  const endereco =
-    "https://wa.me/" +
-    telefone +
-    "?text=" +
-    encodeURIComponent(mensagem);
-
-  window.open(endereco, "_blank", "noopener,noreferrer");
+  window.open("https://wa.me/" + telefone + "?text=" + encodeURIComponent(mensagem), "_blank", "noopener,noreferrer");
 }
-
-document
-  .querySelectorAll("[data-encomendar]")
-  .forEach((botao) => {
-    botao.addEventListener("click", () => {
-      abrirWhatsApp(
-        "Olá, Sr. Alberto! Gostaria de fazer uma encomenda."
-      );
-    });
-  });
-
-/* ==========================================
-   MENU PARA CELULAR
-   ========================================== */
+document.querySelectorAll("[data-encomendar]").forEach(botao => {
+  botao.addEventListener("click", () => abrirWhatsApp("Olá, Sr. Alberto! Gostaria de fazer uma encomenda."));
+});
 
 const botaoMenu = document.querySelector("#botao-menu");
-
-const navegacao = document.querySelector(
-  "#navegacao-principal"
-);
-
+const navegacao = document.querySelector("#navegacao-principal");
 function fecharMenu() {
   navegacao.classList.remove("aberta");
   botaoMenu.setAttribute("aria-expanded", "false");
 }
-
 botaoMenu.addEventListener("click", () => {
   const aberta = navegacao.classList.toggle("aberta");
-
-  botaoMenu.setAttribute(
-    "aria-expanded",
-    String(aberta)
-  );
+  botaoMenu.setAttribute("aria-expanded", String(aberta));
+});
+navegacao.querySelectorAll("a").forEach(a => a.addEventListener("click", fecharMenu));
+document.addEventListener("keydown", evento => {
+  if (evento.key === "Escape" && navegacao.classList.contains("aberta")) fecharMenu();
 });
 
-navegacao.querySelectorAll("a").forEach((ligacao) => {
-  ligacao.addEventListener("click", fecharMenu);
-});
-
-document.addEventListener("keydown", (evento) => {
-  if (
-    evento.key === "Escape" &&
-    navegacao.classList.contains("aberta")
-  ) {
-    fecharMenu();
-    botaoMenu.focus();
-  }
-});
-
-/* ==========================================
-   CRIAÇÃO DOS CARTÕES DE PRODUTOS
-   ========================================== */
-
-/*
-  Função auxiliar para criar elementos HTML.
-
-  textContent trata o conteúdo como texto,
-  sem interpretar nomes de produtos como HTML.
-*/
 function criarElemento(tipo, classe, texto) {
-  const elemento = document.createElement(tipo);
-
-  if (classe) {
-    elemento.className = classe;
-  }
-
-  if (texto !== undefined) {
-    elemento.textContent = texto;
-  }
-
-  return elemento;
+  const el = document.createElement(tipo);
+  if (classe) el.className = classe;
+  if (texto !== undefined) el.textContent = texto;
+  return el;
 }
+let produtos = [];
+let categoriaSelecionada = "Todos";
+const grade = document.querySelector("#grade-produtos");
+const mensagemFiltro = document.querySelector("#resultado-filtro");
 
-function mostrarProdutos(categoria = "Todos") {
-  const grade = document.querySelector("#grade-produtos");
-
-  // Remove os cartões anteriores.
+function apresentacaoTexto(produto) {
+  if (produto.forma_venda === "Quilograma") return "Vendido por quilograma";
+  const a = produto.apresentacao;
+  if (!a) return "Consulte a apresentação";
+  const embalagem = String(a.embalagem || "").replace(/_/g, " ");
+  const quantidade = a.quantidade ? `${a.quantidade} ${a.unidade || ""}`.trim() : "";
+  return [embalagem === "sem embalagem" ? "" : embalagem, quantidade].filter(Boolean).join(" · ") || "Vendido por unidade";
+}
+function mostrarProdutos() {
   grade.replaceChildren();
-
-  // Mostra somente produtos autorizados para a vitrine.
-  const produtosVisiveis = produtos.filter((produto) => {
-    const podeAparecer = produto.exibir_na_landing === true;
-
-    const correspondeCategoria =
-      categoria === "Todos" ||
-      produto.categoria === categoria;
-
-    return podeAparecer && correspondeCategoria;
-  });
-
-  produtosVisiveis.forEach((produto) => {
-    const cartao = criarElemento(
-      "article",
-      "cartao-produto"
-    );
-
+  const visiveis = produtos.filter(p => categoriaSelecionada === "Todos" || p.categoria === categoriaSelecionada);
+  for (const p of visiveis) {
+    const card = criarElemento("article", "cartao-produto");
     const foto = criarElemento("div", "foto-produto");
-
-    const imagem = criarElemento("img");
-
-    imagem.src = produto.imagem;
-    imagem.alt = produto.descricaoImagem;
-    imagem.loading = "lazy";
-    imagem.width = 640;
-    imagem.height = 480;
-
-    foto.append(imagem);
-
+    // Sem foto confirmada do produto: não usamos imagens de outras mercadorias.
+    const placeholder = criarElemento("div", "", "Empório Brasileiro");
+    placeholder.setAttribute("aria-label", "Imagem do produto indisponível");
+    placeholder.style.cssText = "width:100%;height:100%;min-height:145px;display:grid;place-items:center;background:#e9efe9;color:#183f2e;font-family:Georgia,serif;text-align:center;padding:14px;box-sizing:border-box";
+    foto.append(placeholder);
     const dados = criarElemento("div", "dados-produto");
-
-    dados.append(
-      criarElemento(
-        "p",
-        "categoria-produto",
-        produto.categoria
-      )
-    );
-
-    dados.append(
-      criarElemento("h3", "", produto.nome)
-    );
-
-    if (produto.marca) {
-      dados.append(
-        criarElemento("p", "texto-apoio", produto.marca)
-      );
-    }
-
-    dados.append(
-      criarElemento(
-        "p",
-        "medida-produto",
-        produto.apresentacao
-      )
-    );
-
-    const botao = criarElemento(
-      "button",
-      "botao botao-secundario",
-      "Consultar produto ↗"
-    );
-
-    botao.type = "button";
-
-    botao.setAttribute(
-      "aria-label",
-      "Consultar " + produto.nome + " pelo WhatsApp"
-    );
-
-    botao.addEventListener("click", () => {
-      const marca = produto.marca
-        ? " — " + produto.marca
-        : "";
-
-      const mensagem =
-        "Olá, Sr. Alberto! Gostaria de consultar " +
-        "o preço e a disponibilidade de: " +
-        produto.nome +
-        marca +
-        " (" +
-        produto.apresentacao +
-        ").";
-
-      abrirWhatsApp(mensagem);
-    });
-
-    dados.append(botao);
-    cartao.append(foto, dados);
-    grade.append(cartao);
-  });
-
-  if (produtosVisiveis.length === 0) {
-    grade.append(
-      criarElemento(
-        "p",
-        "texto-apoio",
-        "Ainda não há destaques nesta categoria."
-      )
-    );
+    dados.append(criarElemento("p", "categoria-produto", p.categoria));
+    dados.append(criarElemento("h3", "", p.nome));
+    if (p.marca) dados.append(criarElemento("p", "texto-apoio", p.marca));
+    dados.append(criarElemento("p", "medida-produto", apresentacaoTexto(p)));
+    const btn = criarElemento("button", "botao botao-secundario", "Consultar produto ↗");
+    btn.type = "button";
+    btn.setAttribute("aria-label", "Consultar " + p.nome + " pelo WhatsApp");
+    btn.addEventListener("click", () => abrirWhatsApp("Olá, Sr. Alberto! Gostaria de consultar a disponibilidade de: " + p.nome + " (" + apresentacaoTexto(p) + ")."));
+    dados.append(btn);
+    card.append(foto, dados);
+    grade.append(card);
   }
-
-  document.querySelector("#resultado-filtro").textContent =
-    produtosVisiveis.length + " produto(s) exibido(s).";
+  if (!visiveis.length) grade.append(criarElemento("p", "texto-apoio", "Ainda não há destaques nesta categoria."));
+  mensagemFiltro.textContent = visiveis.length + " produto(s) exibido(s).";
 }
-
-/* ==========================================
-   FILTROS DE CATEGORIA
-   ========================================== */
-
-document
-  .querySelectorAll("[data-categoria]")
-  .forEach((botao) => {
-    botao.addEventListener("click", () => {
-
-      document
-        .querySelectorAll("[data-categoria]")
-        .forEach((outroBotao) => {
-          const selecionado = outroBotao === botao;
-
-          outroBotao.classList.toggle(
-            "selecionado",
-            selecionado
-          );
-
-          outroBotao.setAttribute(
-            "aria-pressed",
-            String(selecionado)
-          );
-        });
-
-      mostrarProdutos(botao.dataset.categoria);
+document.querySelectorAll("[data-categoria]").forEach(btn => {
+  btn.addEventListener("click", () => {
+    categoriaSelecionada = btn.dataset.categoria;
+    document.querySelectorAll("[data-categoria]").forEach(outro => {
+      const selecionado = outro === btn;
+      outro.classList.toggle("selecionado", selecionado);
+      outro.setAttribute("aria-pressed", String(selecionado));
     });
+    mostrarProdutos();
   });
+});
+async function carregarProdutos() {
+  grade.replaceChildren(criarElemento("p", "texto-apoio", "Carregando destaques..."));
+  try {
+    const resposta = await fetch("/api/publico/produtos", { cache: "no-store" });
+    if (!resposta.ok) throw new Error("Não foi possível consultar os produtos.");
+    const dados = await resposta.json();
+    if (!Array.isArray(dados)) throw new Error("Resposta inválida.");
+    produtos = dados;
+    mostrarProdutos();
+  } catch (erro) {
+    grade.replaceChildren(criarElemento("p", "texto-apoio", "Não foi possível carregar a vitrine. Atualize a página para tentar novamente."));
+    mensagemFiltro.textContent = "";
+  }
+}
+carregarProdutos();
 
-// Exibe os produtos ao abrir a página.
-mostrarProdutos();
-
-/* ==========================================
-   FORMULÁRIO DE SUGESTÕES
-
-   Esta versão valida os campos, mas NÃO envia
-   nem salva dados no navegador ou no banco.
-   ========================================== */
-
-const formulario = document.querySelector(
-  "#formulario-sugestao"
-);
-
-const produtoSugerido = document.querySelector(
-  "#produto-sugerido"
-);
-
-const receberAviso = document.querySelector(
-  "#receber-aviso"
-);
-
-const camposContato = document.querySelector(
-  "#campos-contato"
-);
-
-const nomeCliente = document.querySelector(
-  "#nome-cliente"
-);
-
-const telefoneCliente = document.querySelector(
-  "#telefone-cliente"
-);
-
-const mensagemFormulario = document.querySelector(
-  "#mensagem-formulario"
-);
-
-// Mostra ou esconde o contato conforme a escolha.
+const formulario = document.querySelector("#formulario-sugestao");
+const produtoSugerido = document.querySelector("#produto-sugerido");
+const receberAviso = document.querySelector("#receber-aviso");
+const camposContato = document.querySelector("#campos-contato");
+const nomeCliente = document.querySelector("#nome-cliente");
+const telefoneCliente = document.querySelector("#telefone-cliente");
+const mensagemFormulario = document.querySelector("#mensagem-formulario");
+const botaoEnviar = formulario.querySelector('[type="submit"]');
 receberAviso.addEventListener("change", () => {
-  const desejaAviso = receberAviso.checked;
-
-  camposContato.hidden = !desejaAviso;
-
-  [nomeCliente, telefoneCliente].forEach((campo) => {
-    campo.required = desejaAviso;
-    campo.disabled = !desejaAviso;
-
-    if (!desejaAviso) {
-      campo.value = "";
-      campo.setCustomValidity("");
-    }
-  });
-
+  const ativo = receberAviso.checked;
+  camposContato.hidden = !ativo;
+  for (const campo of [nomeCliente, telefoneCliente]) {
+    campo.required = ativo;
+    campo.disabled = !ativo;
+    if (!ativo) { campo.value = ""; campo.setCustomValidity(""); }
+  }
   mensagemFormulario.textContent = "";
 });
-
-// Limpa mensagens antigas quando o usuário edita.
-formulario.addEventListener("input", () => {
-  mensagemFormulario.textContent = "";
-});
-
-[
-  produtoSugerido,
-  nomeCliente,
-  telefoneCliente
-].forEach((campo) => {
-  campo.addEventListener("input", () => {
-    campo.setCustomValidity("");
-  });
-});
-
-formulario.addEventListener("submit", (evento) => {
-  // Impede recarregamento ou envio padrão.
+formulario.addEventListener("input", () => { mensagemFormulario.textContent = ""; });
+for (const campo of [produtoSugerido, nomeCliente, telefoneCliente]) {
+  campo.addEventListener("input", () => campo.setCustomValidity(""));
+}
+formulario.addEventListener("submit", async evento => {
   evento.preventDefault();
-
   mensagemFormulario.textContent = "";
-
-  // Não aceita um produto composto apenas por espaços.
   if (!produtoSugerido.value.trim()) {
-    produtoSugerido.setCustomValidity(
-      "Informe o produto que deseja sugerir."
-    );
-
+    produtoSugerido.setCustomValidity("Informe o produto que deseja sugerir.");
     produtoSugerido.reportValidity();
     return;
   }
-
   if (receberAviso.checked) {
-
     if (!nomeCliente.value.trim()) {
       nomeCliente.setCustomValidity("Informe seu nome.");
       nomeCliente.reportValidity();
       return;
     }
-
-    const telefone = telefoneCliente.value.replace(/\D/g, "");
-
-    // Aceita DDD + número, com código 55 opcional.
-    const telefoneValido =
-      /^(?:55)?[1-9][0-9][0-9]{8,9}$/.test(telefone);
-
-    if (!telefoneValido) {
-      telefoneCliente.setCustomValidity(
-        "Informe um telefone com DDD, com 10 ou 11 dígitos. " +
-        "O código 55 é opcional."
-      );
-
+    const digitos = telefoneCliente.value.replace(/\D/g, "");
+    if (!/^(?:55)?[1-9]\d{9,10}$/.test(digitos)) {
+      telefoneCliente.setCustomValidity("Informe seu telefone com DDD (10 ou 11 dígitos).");
       telefoneCliente.reportValidity();
       return;
     }
   }
-
-  mensagemFormulario.textContent =
-    "Prévia concluída: os campos estão preenchidos. " +
-    "Sua sugestão NÃO foi enviada nem salva. " +
-    "O recebimento pelo Sr. Alberto será ativado " +
-    "quando conectarmos o formulário ao sistema.";
-
-  mensagemFormulario.focus();
+  const alternativa = document.querySelector("#aceita-alternativa").value;
+  const opcoes = { sim: "Sim", nao: "Não", conhecer: "Não informado" };
+  botaoEnviar.disabled = true;
+  botaoEnviar.textContent = "Enviando...";
+  try {
+    const resposta = await fetch("/api/publico/sugestoes", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "same-origin",
+      body: JSON.stringify({
+        produto: produtoSugerido.value.trim(),
+        marca: document.querySelector("#marca-sugerida").value.trim(),
+        aceitaAlternativa: opcoes[alternativa] || "Não informado",
+        receberAviso: receberAviso.checked,
+        nomeSolicitante: receberAviso.checked ? nomeCliente.value.trim() : "",
+        telefone: receberAviso.checked ? telefoneCliente.value.replace(/\D/g, "") : ""
+      })
+    });
+    const dados = await resposta.json().catch(() => ({}));
+    if (!resposta.ok) throw new Error(dados.erro || "Não foi possível enviar a sugestão.");
+    formulario.reset();
+    camposContato.hidden = true;
+    for (const campo of [nomeCliente, telefoneCliente]) { campo.disabled = true; campo.required = false; }
+    mensagemFormulario.textContent = "Sugestão recebida! Obrigado por contribuir com o Empório.";
+    mensagemFormulario.focus();
+  } catch (erro) {
+    mensagemFormulario.textContent = erro.message || "Falha ao enviar a sugestão.";
+    mensagemFormulario.focus();
+  } finally {
+    botaoEnviar.disabled = false;
+    botaoEnviar.textContent = "Enviar sugestão ↗";
+  }
 });
 
-/* ==========================================
-   INFORMAÇÕES REAIS DA LOJA
-   ========================================== */
-
 if (configuracoes.endereco) {
-  document.querySelector("#endereco-loja").textContent =
-    configuracoes.endereco;
-
-  document.querySelector(
-    "#complemento-endereco"
-  ).hidden = true;
+  document.querySelector("#endereco-loja").textContent = configuracoes.endereco;
+  document.querySelector("#complemento-endereco").hidden = true;
 }
-
-if (configuracoes.horario) {
-  document.querySelector("#horario-loja").textContent =
-    configuracoes.horario;
-}
+if (configuracoes.horario) document.querySelector("#horario-loja").textContent = configuracoes.horario;

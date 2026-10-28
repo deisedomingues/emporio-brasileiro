@@ -1,0 +1,1210 @@
+//Cria o banco de dados do Empório Brasileiro
+use emporionovo;
+
+//Cria a coleção "categoria" (usada para identificar o grupo que pertence um produto)
+//As categorias, por enquanto, são "Mercearia", "Bebidas", "Laticínios e frios", "Hortifruti", "Limpeza", "Higiene pessoal e beleza".
+db.categoria.insertMany([
+  {
+    id_categoria: 1,
+    nome: "Mercearia",
+    ativo: true
+  },
+  {
+    id_categoria: 2,
+    nome: "Bebidas",
+    ativo: true
+  },
+  {
+    id_categoria: 3,
+    nome: "Laticínios e frios",
+    ativo: true
+  },
+  {
+    id_categoria: 4,
+    nome: "Hortifruti",
+    ativo: true
+  },
+  {
+    id_categoria: 5,
+    nome: "Limpeza",
+    ativo: true
+  },
+  {
+    id_categoria: 6,
+    nome: "Higiene pessoal e beleza",
+    ativo: true
+  }
+])
+
+//Cria a coleção "produto" e insere 20 itens (todos com os mesmo campos)
+db.produto.insertMany([
+  // CATEGORIA 1 — MERCEARIA
+  {
+    id_produto: 1,
+    nome: "Arroz branco tipo 1 5 kg",
+    marca: "Camil",
+    id_categoria: 1,
+    forma_venda: "Unidade",
+    apresentacao: {
+      embalagem: "pacote",
+      quantidade: 5,
+      unidade: "kg"
+    },
+    codigo_barras: "7896006711254",
+    codigo_interno: "",
+    preco_venda: 32.00,
+    exibir_landing: true,
+    ativo: true,
+    caracteristicas: {
+      tipo_arroz: "Branco",
+      classificacao: "Tipo 1"
+    },
+    criado_em: new Date()
+  },
+
+  {
+    id_produto: 2,
+    nome: "Feijão carioca tipo 1 1 kg",
+    marca: "Kicaldo",
+    id_categoria: 1,
+    forma_venda: "Unidade",
+    apresentacao: {
+      embalagem: "pacote",
+      quantidade: 1,
+      unidade: "kg"
+    },
+    codigo_barras: "7896116900029",
+    codigo_interno: "",
+    preco_venda: 9.00,
+    exibir_landing: false,
+    ativo: true,
+    caracteristicas: {
+      variedade: "Carioca",
+      classificacao: "Tipo 1"
+    },
+    criado_em: new Date()
+  },
+
+  {
+    id_produto: 3,
+    nome: "Sal refinado tradicional 1 kg",
+    marca: "Cisne",
+    id_categoria: 1,
+    forma_venda: "Unidade",
+    apresentacao: {
+      embalagem: "pacote",
+      quantidade: 1,
+      unidade: "kg"
+    },
+    codigo_barras: "7896035210001",
+    codigo_interno: "",
+    preco_venda: 3.50,
+    exibir_landing: false,
+    ativo: true,
+    caracteristicas: {
+      tipo_sal: "Refinado"
+    },
+    criado_em: new Date()
+  },
+
+  {
+    id_produto: 4,
+    nome: "Açúcar refinado 1 kg",
+    marca: "União",
+    id_categoria: 1,
+    forma_venda: "Unidade",
+    apresentacao: {
+      embalagem: "pacote",
+      quantidade: 1,
+      unidade: "kg"
+    },
+    codigo_barras: "7891910001972",
+    codigo_interno: "",
+    preco_venda: 7.50,
+    exibir_landing: false,
+    ativo: true,
+    caracteristicas: {
+      tipo_acucar: "Refinado"
+    },
+    criado_em: new Date()
+  },
+
+  {
+    id_produto: 5,
+    nome: "Biscoito recheado chocolate 126 g",
+    marca: "Trakinas",
+    id_categoria: 1,
+    forma_venda: "Unidade",
+    apresentacao: {
+      embalagem: "pacote",
+      quantidade: 126,
+      unidade: "g"
+    },
+    codigo_barras: "7622210592750",
+    codigo_interno: "",
+    preco_venda: 3.99,
+    exibir_landing: false,
+    ativo: true,
+    caracteristicas: {
+      tipo_biscoito: "Recheado",
+      sabor: "Chocolate"
+    },
+    criado_em: new Date()
+  },
+
+  {
+    id_produto: 6,
+    nome: "Café torrado e moído tradicional 500 g",
+    marca: "Pilão",
+    id_categoria: 1,
+    forma_venda: "Unidade",
+    apresentacao: {
+      embalagem: "pacote",
+      quantidade: 500,
+      unidade: "g"
+    },
+    codigo_barras: "7896089012019",
+    codigo_interno: "",
+    preco_venda: 35.00,
+    exibir_landing: true,
+    ativo: true,
+    caracteristicas: {
+      tipo_cafe: "Torrado e moído",
+      intensidade: "Tradicional"
+    },
+    criado_em: new Date()
+  },
+
+  // CATEGORIA 2 — BEBIDAS
+  {
+    id_produto: 7,
+    nome: "Refrigerante Coca-Cola original lata 350 ml",
+    marca: "Coca-Cola",
+    id_categoria: 2,
+    forma_venda: "Unidade",
+    apresentacao: {
+      embalagem: "lata",
+      quantidade: 350,
+      unidade: "ml"
+    },
+    codigo_barras: "7894900010015",
+    codigo_interno: "",
+    preco_venda: 5.00,
+    exibir_landing: true,
+    ativo: true,
+    caracteristicas: {
+      tipo_bebida: "Refrigerante",
+      gaseificado: true,
+      zero_acucar: false
+    },
+    criado_em: new Date()
+  },
+
+  {
+    id_produto: 8,
+    nome: "Refrigerante Coca-Cola original PET 2 L",
+    marca: "Coca-Cola",
+    id_categoria: 2,
+    forma_venda: "Unidade",
+    apresentacao: {
+      embalagem: "garrafa_pet",
+      quantidade: 2,
+      unidade: "L"
+    },
+    codigo_barras: "7894900027013",
+    codigo_interno: "",
+    preco_venda: 12.00,
+    exibir_landing: true,
+    ativo: true,
+    caracteristicas: {
+      tipo_bebida: "Refrigerante",
+      gaseificado: true,
+      zero_acucar: false
+    },
+    criado_em: new Date()
+  },
+
+  {
+    id_produto: 9,
+    nome: "Refrigerante Coca-Cola Zero lata 350 ml",
+    marca: "Coca-Cola",
+    id_categoria: 2,
+    forma_venda: "Unidade",
+    apresentacao: {
+      embalagem: "lata",
+      quantidade: 350,
+      unidade: "ml"
+    },
+    codigo_barras: "7894900700015",
+    codigo_interno: "",
+    preco_venda: 5.00,
+    exibir_landing: true,
+    ativo: true,
+    caracteristicas: {
+      tipo_bebida: "Refrigerante",
+      gaseificado: true,
+      zero_acucar: true
+    },
+    criado_em: new Date()
+  },
+
+  // CATEGORIA 3 — LATICÍNIOS E FRIOS
+  {
+    id_produto: 10,
+    nome: "Leite UHT integral 1 L",
+    marca: "Italac",
+    id_categoria: 3,
+    forma_venda: "Unidade",
+    apresentacao: {
+      embalagem: "caixa",
+      quantidade: 1,
+      unidade: "L"
+    },
+    codigo_barras: "7898080640611",
+    codigo_interno: "",
+    preco_venda: 7.00,
+    exibir_landing: true,
+    ativo: true,
+    caracteristicas: {
+      tipo_leite: "UHT",
+      teor_gordura: "Integral"
+    },
+    criado_em: new Date()
+  },
+
+  {
+    id_produto: 11,
+    nome: "Manteiga com sal 200 g",
+    marca: "Aviação",
+    id_categoria: 3,
+    forma_venda: "Unidade",
+    apresentacao: {
+      embalagem: "pote",
+      quantidade: 200,
+      unidade: "g"
+    },
+    codigo_barras: "7896331100310",
+    codigo_interno: "",
+    preco_venda: 18.00,
+    exibir_landing: false,
+    ativo: true,
+    caracteristicas: {
+      tipo_derivado: "Manteiga",
+      com_sal: true
+    },
+    criado_em: new Date()
+  },
+
+  {
+    id_produto: 12,
+    nome: "Ovo de galinha branco",
+    marca: "",
+    id_categoria: 3,
+    forma_venda: "Unidade",
+    apresentacao: {
+      embalagem: "sem_embalagem",
+      quantidade: 1,
+      unidade: "un"
+    },
+    codigo_barras: "",
+    codigo_interno: "OVO001",
+    preco_venda: 1.20,
+    exibir_landing: false,
+    ativo: true,
+    caracteristicas: {
+      tipo_ovo: "Galinha",
+      cor_casca: "Branca"
+    },
+    criado_em: new Date()
+  },
+
+  // CATEGORIA 4 — HORTIFRUTI
+  {
+    id_produto: 13,
+    nome: "Batata inglesa",
+    marca: "",
+    id_categoria: 4,
+    forma_venda: "Quilograma",
+    apresentacao: {
+      embalagem: "sem_embalagem",
+      quantidade: null,
+      unidade: ""
+    },
+    codigo_barras: "",
+    codigo_interno: "HORT001",
+    preco_venda: 6.99,
+    exibir_landing: true,
+    ativo: true,
+    caracteristicas: {
+      tipo_hortifruti: "Tubérculo",
+      variedade: "Inglesa"
+    },
+    criado_em: new Date()
+  },
+
+  {
+    id_produto: 14,
+    nome: "Cebola",
+    marca: "",
+    id_categoria: 4,
+    forma_venda: "Quilograma",
+    apresentacao: {
+      embalagem: "sem_embalagem",
+      quantidade: null,
+      unidade: ""
+    },
+    codigo_barras: "",
+    codigo_interno: "HORT002",
+    preco_venda: 5.99,
+    exibir_landing: true,
+    ativo: true,
+    caracteristicas: {
+      tipo_hortifruti: "Bulbo"
+    },
+    criado_em: new Date()
+  },
+
+  {
+    id_produto: 15,
+    nome: "Abacate",
+    marca: "",
+    id_categoria: 4,
+    forma_venda: "Unidade",
+    apresentacao: {
+      embalagem: "sem_embalagem",
+      quantidade: 1,
+      unidade: "un"
+    },
+    codigo_barras: "",
+    codigo_interno: "HORT003",
+    preco_venda: 7.00,
+    exibir_landing: true,
+    ativo: true,
+    caracteristicas: {
+      tipo_hortifruti: "Fruta"
+    },
+    criado_em: new Date()
+  },
+
+  {
+    id_produto: 16,
+    nome: "Banana-prata",
+    marca: "",
+    id_categoria: 4,
+    forma_venda: "Quilograma",
+    apresentacao: {
+      embalagem: "sem_embalagem",
+      quantidade: null,
+      unidade: ""
+    },
+    codigo_barras: "",
+    codigo_interno: "HORT004",
+    preco_venda: 8.00,
+    exibir_landing: true,
+    ativo: true,
+    caracteristicas: {
+      tipo_hortifruti: "Fruta",
+      variedade: "Prata"
+    },
+    criado_em: new Date()
+  },
+
+  // CATEGORIA 5 — LIMPEZA
+  {
+    id_produto: 17,
+    nome: "Sabão líquido Lavagem Perfeita 3 L",
+    marca: "OMO",
+    id_categoria: 5,
+    forma_venda: "Unidade",
+    apresentacao: {
+      embalagem: "frasco",
+      quantidade: 3,
+      unidade: "L"
+    },
+    codigo_barras: "7891150020689",
+    codigo_interno: "",
+    preco_venda: 39.90,
+    exibir_landing: false,
+    ativo: true,
+    caracteristicas: {
+      tipo_limpeza: "Lava-roupas líquido",
+      linha: "Lavagem Perfeita"
+    },
+    criado_em: new Date()
+  },
+
+  {
+    id_produto: 18,
+    nome: "Detergente líquido neutro 500 ml",
+    marca: "Ypê",
+    id_categoria: 5,
+    forma_venda: "Unidade",
+    apresentacao: {
+      embalagem: "frasco",
+      quantidade: 500,
+      unidade: "ml"
+    },
+    codigo_barras: "7896098900208",
+    codigo_interno: "",
+    preco_venda: 3.29,
+    exibir_landing: false,
+    ativo: true,
+    caracteristicas: {
+      tipo_limpeza: "Detergente para louças",
+      fragrancia: "Neutro"
+    },
+    criado_em: new Date()
+  },
+
+  // CATEGORIA 6 — HIGIENE PESSOAL E BELEZA
+  {
+    id_produto: 19,
+    nome: "Papel higiênico folha dupla neutro 12 rolos de 30 m",
+    marca: "Neve",
+    id_categoria: 6,
+    forma_venda: "Unidade",
+    apresentacao: {
+      embalagem: "pacote",
+      quantidade: 12,
+      unidade: "un"
+    },
+    codigo_barras: "7891172421297",
+    codigo_interno: "",
+    preco_venda: 29.90,
+    exibir_landing: false,
+    ativo: true,
+    caracteristicas: {
+      tipo_folha: "Dupla",
+      quantidade_rolos: 12,
+      metros_por_rolo: 30,
+      perfumado: false
+    },
+    criado_em: new Date()
+  },
+
+  {
+    id_produto: 20,
+    nome: "Creme dental Total 12 Clean Mint 90 g",
+    marca: "Colgate",
+    id_categoria: 6,
+    forma_venda: "Unidade",
+    apresentacao: {
+      embalagem: "tubo",
+      quantidade: 90,
+      unidade: "g"
+    },
+    codigo_barras: "7793100111143",
+    codigo_interno: "",
+    preco_venda: 12.90,
+    exibir_landing: false,
+    ativo: true,
+    caracteristicas: {
+      tipo_higiene: "Creme dental",
+      linha: "Total 12",
+      variante: "Clean Mint"
+    },
+    criado_em: new Date()
+  }
+
+])
+
+db.produto.find()
+
+//Cria índice para os produtos. O "1" significa ordem crescente.
+db.produto.createIndex(
+  { id_produto: 1 },
+  { unique: true }
+)
+
+//Cria coleção "entrada_produto" e insere 2 entradas para cada produto cadastrado.
+db.entrada_produto.insertMany([
+  {
+    id_entrada: 1,
+    id_produto: 1,
+    data_entrada: "2026-10-10",
+    quantidade: 12,
+    custo_unitario: 24.00,
+    lote: "AR1026A",
+    validade: "2027-08-31"
+  },
+  {
+    id_entrada: 2,
+    id_produto: 1,
+    data_entrada: "2026-10-24",
+    quantidade: 8,
+    custo_unitario: 25.50,
+    lote: "AR1026B",
+    validade: "2027-08-31"
+  },
+  {
+    id_entrada: 3,
+    id_produto: 2,
+    data_entrada: "2026-10-10",
+    quantidade: 18,
+    custo_unitario: 6.00,
+    lote: "FE1026A",
+    validade: "2027-04-30"
+  },
+  {
+    id_entrada: 4,
+    id_produto: 2,
+    data_entrada: "2026-10-24",
+    quantidade: 12,
+    custo_unitario: 6.30,
+    lote: "FE1026B",
+    validade: "2027-04-30"
+  },
+  {
+    id_entrada: 5,
+    id_produto: 3,
+    data_entrada: "2026-10-10",
+    quantidade: 20,
+    custo_unitario: 2.10,
+    lote: "SA1026A",
+    validade: "2028-01-31"
+  },
+  {
+    id_entrada: 6,
+    id_produto: 3,
+    data_entrada: "2026-10-24",
+    quantidade: 15,
+    custo_unitario: 2.20,
+    lote: "SA1026B",
+    validade: "2028-01-31"
+  },
+  {
+    id_entrada: 7,
+    id_produto: 4,
+    data_entrada: "2026-10-10",
+    quantidade: 24,
+    custo_unitario: 5.00,
+    lote: "AC1026A",
+    validade: "2027-09-30"
+  },
+  {
+    id_entrada: 8,
+    id_produto: 4,
+    data_entrada: "2026-10-24",
+    quantidade: 12,
+    custo_unitario: 5.20,
+    lote: "AC1026B",
+    validade: "2027-09-30"
+  },
+  {
+    id_entrada: 9,
+    id_produto: 5,
+    data_entrada: "2026-10-10",
+    quantidade: 30,
+    custo_unitario: 2.50,
+    lote: "BI1026A",
+    validade: "2027-02-28"
+  },
+  {
+    id_entrada: 10,
+    id_produto: 5,
+    data_entrada: "2026-10-24",
+    quantidade: 24,
+    custo_unitario: 2.65,
+    lote: "BI1026B",
+    validade: "2027-02-28"
+  },
+  {
+    id_entrada: 11,
+    id_produto: 6,
+    data_entrada: "2026-10-10",
+    quantidade: 10,
+    custo_unitario: 25.00,
+    lote: "CA1026A",
+    validade: "2027-07-31"
+  },
+  {
+    id_entrada: 12,
+    id_produto: 6,
+    data_entrada: "2026-10-24",
+    quantidade: 12,
+    custo_unitario: 26.00,
+    lote: "CA1026B",
+    validade: "2027-07-31"
+  },
+  {
+    id_entrada: 13,
+    id_produto: 7,
+    data_entrada: "2026-10-10",
+    quantidade: 24,
+    custo_unitario: 3.20,
+    lote: "CCL1026A",
+    validade: "2027-03-31"
+  },
+  {
+    id_entrada: 14,
+    id_produto: 7,
+    data_entrada: "2026-10-24",
+    quantidade: 36,
+    custo_unitario: 3.35,
+    lote: "CCL1026B",
+    validade: "2027-03-31"
+  },
+  {
+    id_entrada: 15,
+    id_produto: 8,
+    data_entrada: "2026-10-10",
+    quantidade: 12,
+    custo_unitario: 8.00,
+    lote: "CCP1026A",
+    validade: "2027-02-28"
+  },
+  {
+    id_entrada: 16,
+    id_produto: 8,
+    data_entrada: "2026-10-24",
+    quantidade: 18,
+    custo_unitario: 8.30,
+    lote: "CCP1026B",
+    validade: "2027-02-28"
+  },
+  {
+    id_entrada: 17,
+    id_produto: 9,
+    data_entrada: "2026-10-10",
+    quantidade: 24,
+    custo_unitario: 3.25,
+    lote: "CCZ1026A",
+    validade: "2027-03-31"
+  },
+  {
+    id_entrada: 18,
+    id_produto: 9,
+    data_entrada: "2026-10-24",
+    quantidade: 24,
+    custo_unitario: 3.40,
+    lote: "CCZ1026B",
+    validade: "2027-03-31"
+  },
+  {
+    id_entrada: 19,
+    id_produto: 10,
+    data_entrada: "2026-10-10",
+    quantidade: 24,
+    custo_unitario: 5.00,
+    lote: "LE1026A",
+    validade: "2027-01-15"
+  },
+  {
+    id_entrada: 20,
+    id_produto: 10,
+    data_entrada: "2026-10-24",
+    quantidade: 36,
+    custo_unitario: 5.30,
+    lote: "LE1026B",
+    validade: "2027-01-15"
+  },
+  {
+    id_entrada: 21,
+    id_produto: 11,
+    data_entrada: "2026-10-10",
+    quantidade: 8,
+    custo_unitario: 12.00,
+    lote: "MA1026A",
+    validade: "2027-02-15"
+  },
+  {
+    id_entrada: 22,
+    id_produto: 11,
+    data_entrada: "2026-10-24",
+    quantidade: 10,
+    custo_unitario: 12.50,
+    lote: "MA1026B",
+    validade: "2027-02-15"
+  },
+  {
+    id_entrada: 23,
+    id_produto: 12,
+    data_entrada: "2026-10-10",
+    quantidade: 60,
+    custo_unitario: 0.68,
+    lote: "",
+    validade: "2026-11-12"
+  },
+  {
+    id_entrada: 24,
+    id_produto: 12,
+    data_entrada: "2026-10-24",
+    quantidade: 90,
+    custo_unitario: 0.72,
+    lote: "",
+    validade: "2026-11-12"
+  },
+  {
+    id_entrada: 25,
+    id_produto: 13,
+    data_entrada: "2026-10-10",
+    quantidade: 15.5,
+    custo_unitario: 4.20,
+    lote: "",
+    validade: null
+  },
+  {
+    id_entrada: 26,
+    id_produto: 13,
+    data_entrada: "2026-10-24",
+    quantidade: 12.0,
+    custo_unitario: 4.40,
+    lote: "",
+    validade: null
+  },
+  {
+    id_entrada: 27,
+    id_produto: 14,
+    data_entrada: "2026-10-10",
+    quantidade: 18.0,
+    custo_unitario: 3.20,
+    lote: "",
+    validade: null
+  },
+  {
+    id_entrada: 28,
+    id_produto: 14,
+    data_entrada: "2026-10-24",
+    quantidade: 14.5,
+    custo_unitario: 3.50,
+    lote: "",
+    validade: null
+  },
+  {
+    id_entrada: 29,
+    id_produto: 15,
+    data_entrada: "2026-10-10",
+    quantidade: 10,
+    custo_unitario: 4.30,
+    lote: "",
+    validade: null
+  },
+  {
+    id_entrada: 30,
+    id_produto: 15,
+    data_entrada: "2026-10-24",
+    quantidade: 8,
+    custo_unitario: 4.80,
+    lote: "",
+    validade: null
+  },
+  {
+    id_entrada: 31,
+    id_produto: 16,
+    data_entrada: "2026-10-10",
+    quantidade: 12.5,
+    custo_unitario: 4.60,
+    lote: "",
+    validade: null
+  },
+  {
+    id_entrada: 32,
+    id_produto: 16,
+    data_entrada: "2026-10-24",
+    quantidade: 10.0,
+    custo_unitario: 4.90,
+    lote: "",
+    validade: null
+  },
+  {
+    id_entrada: 33,
+    id_produto: 17,
+    data_entrada: "2026-10-10",
+    quantidade: 6,
+    custo_unitario: 28.00,
+    lote: "OM1026A",
+    validade: "2028-01-31"
+  },
+  {
+    id_entrada: 34,
+    id_produto: 17,
+    data_entrada: "2026-10-24",
+    quantidade: 8,
+    custo_unitario: 29.00,
+    lote: "OM1026B",
+    validade: "2028-01-31"
+  },
+  {
+    id_entrada: 35,
+    id_produto: 18,
+    data_entrada: "2026-10-10",
+    quantidade: 24,
+    custo_unitario: 1.90,
+    lote: "DE1026A",
+    validade: "2028-03-31"
+  },
+  {
+    id_entrada: 36,
+    id_produto: 18,
+    data_entrada: "2026-10-24",
+    quantidade: 24,
+    custo_unitario: 2.05,
+    lote: "DE1026B",
+    validade: "2028-03-31"
+  },
+  {
+    id_entrada: 37,
+    id_produto: 19,
+    data_entrada: "2026-10-10",
+    quantidade: 8,
+    custo_unitario: 20.00,
+    lote: "",
+    validade: null
+  },
+  {
+    id_entrada: 38,
+    id_produto: 19,
+    data_entrada: "2026-10-24",
+    quantidade: 6,
+    custo_unitario: 21.00,
+    lote: "",
+    validade: null
+  },
+  {
+    id_entrada: 39,
+    id_produto: 20,
+    data_entrada: "2026-10-10",
+    quantidade: 12,
+    custo_unitario: 8.00,
+    lote: "CD1026A",
+    validade: "2027-11-30"
+  },
+  {
+    id_entrada: 40,
+    id_produto: 20,
+    data_entrada: "2026-10-24",
+    quantidade: 10,
+    custo_unitario: 8.50,
+    lote: "CD1026B",
+    validade: "2027-11-30"
+  }
+
+])
+
+
+//Cria índice para as entradas de produtos. O "1" significa ordem crescente.
+db.entrada_produto.createIndex(
+  { id_entrada: 1 },
+  { unique: true }
+)
+
+//Corrige os campos de data da coleção entrada-produto (foram criados como string)
+db.entrada_produto.find().forEach(function(doc) {
+
+  if (typeof doc.data_entrada === "string") {
+    doc.data_entrada = new Date(doc.data_entrada);
+  }
+
+  if (typeof doc.validade === "string" && doc.validade !== "") {
+    doc.validade = new Date(doc.validade);
+  }
+
+  db.entrada_produto.replaceOne(
+    { _id: doc._id },
+    doc
+  );
+
+})
+
+//Cria a coleção "encomenda" e insere 6 encomendas 
+
+db.encomenda.insertMany([
+  {
+    id_encomenda: 1,
+    solicitante: { nome: "Cliente 01", telefone: "11900000001" },
+    data: "2026-10-20",
+    dataRetirada: "2026-10-22",
+    status: "Entregue",
+    itens: [
+      { id_produto: 7, quantidade: 2, precoUnitario: 5.00, status: "Entregue" },
+      { id_produto: 10, quantidade: 3, precoUnitario: 7.00, status: "Entregue" }
+    ],
+    total: 31.00
+  },
+  {
+    id_encomenda: 2,
+    solicitante: { nome: "Cliente 02", telefone: "11900000002" },
+    data: "2026-10-21",
+    dataRetirada: "2026-10-23",
+    status: "Não retirada",
+    itens: [
+      { id_produto: 1, quantidade: 1, precoUnitario: 32.00, status: "Disponível" },
+      { id_produto: 2, quantidade: 2, precoUnitario: 9.00, status: "Disponível" }
+    ],
+    total: 50.00
+  },
+  {
+    id_encomenda: 3,
+    solicitante: { nome: "Cliente 03", telefone: "11900000003" },
+    data: "2026-10-23",
+    dataRetirada: "2026-10-28",
+    status: "Parcialmente atendida",
+    itens: [
+      { id_produto: 8, quantidade: 2, precoUnitario: 12.00, status: "Disponível" },
+      { id_produto: 11, quantidade: 1, precoUnitario: 18.00, status: "Não encontrado" }
+    ],
+    total: 42.00
+  },
+  {
+    id_encomenda: 4,
+    solicitante: { nome: "Cliente 04", telefone: "11900000004" },
+    data: "2026-10-24",
+    dataRetirada: "2026-10-29",
+    status: "Pendente",
+    itens: [
+      { id_produto: 13, quantidade: 2.5, precoUnitario: 6.99, status: "Pendente" },
+      { id_produto: 14, quantidade: 1.5, precoUnitario: 5.99, status: "Pendente" }
+    ],
+    total: 26.46
+  },
+  {
+    id_encomenda: 5,
+    solicitante: { nome: "Cliente 05", telefone: "11900000005" },
+    data: "2026-10-25",
+    dataRetirada: "2026-10-30",
+    status: "Disponível",
+    itens: [
+      { id_produto: 12, quantidade: 12, precoUnitario: 1.20, status: "Disponível" },
+      { id_produto: 15, quantidade: 2, precoUnitario: 7.00, status: "Disponível" }
+    ],
+    total: 28.40
+  },
+  {
+    id_encomenda: 6,
+    solicitante: { nome: "Cliente 06", telefone: "11900000006" },
+    data: "2026-10-26",
+    dataRetirada: "2026-10-31",
+    status: "Cancelado",
+    itens: [
+      { id_produto: 17, quantidade: 1, precoUnitario: 39.90, status: "Cancelado" }
+    ],
+    total: 39.90
+  }
+])
+
+//Cria o índice para as encomendas
+db.encomenda.createIndex(
+  { id_encomenda: 1 },
+  { unique: true }
+)
+
+//Cria a coleção "venda" e insere 5 vendas 
+db.venda.insertMany([
+  {
+    id_venda: 1,
+    id_encomenda: 1,
+    data: "2026-10-22",
+    itens: [
+      {
+        id_produto: 7,
+        quantidade: 2,
+        precoUnitario: 5.00
+      },
+      {
+        id_produto: 10,
+        quantidade: 3,
+        precoUnitario: 7.00
+      }
+    ],
+    total: 31.00,
+    formaPagamento: "Não informada"
+  },
+  {
+    id_venda: 2,
+    data: "2026-10-23",
+    itens: [
+      {
+        id_produto: 8,
+        quantidade: 1,
+        precoUnitario: 12.00
+      },
+      {
+        id_produto: 9,
+        quantidade: 1,
+        precoUnitario: 5.00
+      }
+    ],
+    total: 17.00,
+    formaPagamento: "Pix"
+  },
+  {
+    id_venda: 3,
+    data: "2026-10-24",
+    itens: [
+      {
+        id_produto: 13,
+        quantidade: 2,
+        precoUnitario: 6.99
+      },
+      {
+        id_produto: 14,
+        quantidade: 1,
+        precoUnitario: 5.99
+      }
+    ],
+    total: 19.97,
+    formaPagamento: "Dinheiro"
+  },
+  {
+    id_venda: 4,
+    data: "2026-10-25",
+    itens: [
+      {
+        id_produto: 17,
+        quantidade: 1,
+        precoUnitario: 39.90
+      },
+      {
+        id_produto: 18,
+        quantidade: 1,
+        precoUnitario: 3.29
+      }
+    ],
+    total: 43.19,
+    formaPagamento: "Cartão de débito"
+  },
+  {
+    id_venda: 5,
+    data: "2026-10-26",
+    itens: [
+      {
+        id_produto: 19,
+        quantidade: 1,
+        precoUnitario: 29.90
+      },
+      {
+        id_produto: 20,
+        quantidade: 1,
+        precoUnitario: 12.90
+      }
+    ],
+    total: 42.80,
+    formaPagamento: "Cartão de crédito"
+  }
+])
+
+//Cria o índice das vendas 
+db.venda.createIndex(
+  { id_venda: 1 },
+  { unique: true }
+)
+
+db.venda.find().count()
+
+//Cria a coleção de sugestões com 10 sugestões
+db.sugestao.insertMany([
+  {
+    id_sugestao: 1,
+    produto: "Pão francês",
+    marca: "",
+    aceitaAlternativa: "Sim",
+    receberAviso: false,
+    status: "Recebida",
+    data: "2026-10-05"
+  },
+  {
+    id_sugestao: 2,
+    produto: "Água de coco",
+    marca: "Kero Coco",
+    aceitaAlternativa: "Sim",
+    receberAviso: false,
+    status: "Em análise",
+    data: "2026-10-07"
+  },
+  {
+    id_sugestao: 3,
+    produto: "Azeite de oliva extravirgem",
+    marca: "Gallo",
+    aceitaAlternativa: "Não",
+    receberAviso: false,
+    status: "Recebida",
+    data: "2026-10-09"
+  },
+  {
+    id_sugestao: 4,
+    produto: "Pão francês",
+    marca: "",
+    aceitaAlternativa: "Sim",
+    receberAviso: false,
+    status: "Recebida",
+    data: "2026-10-11"
+  },
+  {
+    id_sugestao: 5,
+    produto: "Iogurte natural",
+    marca: "Nestlé",
+    aceitaAlternativa: "Sim",
+    receberAviso: false,
+    status: "Em análise",
+    data: "2026-10-13"
+  },
+  {
+    id_sugestao: 6,
+    produto: "Pão francês",
+    marca: "",
+    aceitaAlternativa: "Sim",
+    receberAviso: false,
+    status: "Recebida",
+    data: "2026-10-15"
+  },
+  {
+    id_sugestao: 7,
+    produto: "Água de coco",
+    marca: "",
+    aceitaAlternativa: "Sim",
+    receberAviso: false,
+    status: "Recebida",
+    data: "2026-10-18"
+  },
+  {
+    id_sugestao: 8,
+    produto: "Leite sem lactose",
+    marca: "Italac",
+    aceitaAlternativa: "Sim",
+    receberAviso: false,
+    status: "Atendida",
+    data: "2026-10-20"
+  },
+  {
+    id_sugestao: 9,
+    produto: "Ração para gatos",
+    marca: "Whiskas",
+    aceitaAlternativa: "Não",
+    receberAviso: false,
+    status: "Não atendida",
+    data: "2026-10-23"
+  },
+  {
+    id_sugestao: 10,
+    produto: "Iogurte natural",
+    marca: "",
+    aceitaAlternativa: "Sim",
+    receberAviso: false,
+    status: "Recebida",
+    data: "2026-10-26"
+  }
+])
+
+//Cria o índice das sugestões
+db.sugestao.createIndex(
+  { id_sugestao: 1 },
+  { unique: true }
+)
+
+db.sugestao.find().count()
+
+//Cria índice do fornecedor
+db.fornecedor.createIndex(
+  { id_fornecedor: 1 },
+  { unique: true }
+)
+
+//Cria índice de compra (entrada)
+db.compra.createIndex(
+  { id_compra: 1 },
+  { unique: true }
+)
+
+show collections
+
+db.sugestao.find()
