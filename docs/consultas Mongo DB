@@ -1,0 +1,89 @@
+Consultas para Projeto integrador
+  
+  // 1. Produtos ativos exibidos na landing page
+db.produto.find({ ativo: true, exibir_landing: true }, { _id: 0, id_produto: 1, nome: 1, preco_venda: 1 })
+
+// 2. Produtos por categoria (exemplo: categoria 4, Hortifruti)
+db.produto.find({ id_categoria: 4 }, { _id: 0, nome: 1, forma_venda: 1, preco_venda: 1 })
+
+// 3. Quantidade de produtos cadastrados em cada categoria
+db.produto.aggregate([
+  { $group: { _id: "$id_categoria", quantidade: { $sum: 1 } } },
+  { $lookup: { from: "categoria", localField: "_id", foreignField: "id_categoria", as: "categoria" } },
+  { $unwind: "$categoria" },
+  { $project: { _id: 0, categoria: "$categoria.nome", quantidade: 1 } },
+  { $sort: { quantidade: -1 } }
+])
+
+// 4. Encomendas pendentes
+db.encomenda.find({ status: "Pendente" }, { _id: 0, id_encomenda: 1, data: 1, dataRetirada: 1, status: 1, total: 1 })
+
+// 5. Encomendas por situação
+db.encomenda.aggregate([
+  { $group: { _id: "$status", quantidade: { $sum: 1 } } },
+  { $sort: { quantidade: -1 } }
+])
+
+// 6. Produtos mais solicitados nas encomendas
+db.encomenda.aggregate([
+  { $unwind: "$itens" },
+  { $group: { _id: "$itens.id_produto", quantidade_solicitada: { $sum: "$itens.quantidade" } } },
+  { $lookup: { from: "produto", localField: "_id", foreignField: "id_produto", as: "produto" } },
+  { $unwind: "$produto" },
+  { $project: { _id: 0, produto: "$produto.nome", quantidade_solicitada: 1, forma_venda: "$produto.forma_venda" } },
+  { $sort: { quantidade_solicitada: -1 } }
+])
+
+// 7. Total das vendas registradas (não incluir encomendas não convertidas em venda)
+db.venda.aggregate([
+  { $group: { _id: null, quantidade_vendas: { $sum: 1 }, valor_total: { $sum: "$total" } } },
+  { $project: { _id: 0, quantidade_vendas: 1, valor_total: 1 } }
+])
+
+// 8. Vendas por forma de pagamento
+db.venda.aggregate([
+  { $group: { _id: "$formaPagamento", quantidade: { $sum: 1 }, valor_total: { $sum: "$total" } } },
+  { $sort: { valor_total: -1 } }
+])
+
+// 9. Produtos e quantidades registrados em vendas
+db.venda.aggregate([
+  { $unwind: "$itens" },
+  { $group: { _id: "$itens.id_produto", quantidade_vendida: { $sum: "$itens.quantidade" } } },
+  { $lookup: { from: "produto", localField: "_id", foreignField: "id_produto", as: "produto" } },
+  { $unwind: "$produto" },
+  { $project: { _id: 0, produto: "$produto.nome", quantidade_vendida: 1, forma_venda: "$produto.forma_venda" } },
+  { $sort: { quantidade_vendida: -1 } }
+])
+
+// 10. Compras e fornecedores
+db.compra.aggregate([
+  { $lookup: { from: "fornecedor", localField: "id_fornecedor", foreignField: "id_fornecedor", as: "fornecedor" } },
+  { $unwind: "$fornecedor" },
+  { $project: { _id: 0, id_compra: 1, data_compra: 1, fornecedor: "$fornecedor.nome", total_compra: 1 } },
+  { $sort: { id_compra: 1 } }
+])
+
+// 11. Entradas de mercadorias e produtos
+db.entrada_produto.aggregate([
+  { $lookup: { from: "produto", localField: "id_produto", foreignField: "id_produto", as: "produto" } },
+  { $unwind: "$produto" },
+  { $project: { _id: 0, data_entrada: 1, produto: "$produto.nome", quantidade: 1, custo_unitario: 1, lote: 1 } },
+  { $sort: { data_entrada: -1 } }
+])
+
+// 12. Sugestões recebidas e suas situações
+db.sugestao.aggregate([
+  { $group: { _id: "$status", quantidade: { $sum: 1 } } },
+  { $sort: { quantidade: -1 } }
+])
+
+// 13. Produtos mais citados nas sugestões
+db.sugestao.aggregate([
+  { $group: { _id: "$produto", quantidade: { $sum: 1 } } },
+  { $sort: { quantidade: -1 } }
+])
+
+// 14. Consulta de fornecedores ativos
+db.fornecedor.find({ ativo: true }, { _id: 0, id_fornecedor: 1, tipo: 1, nome: 1 })
+)
