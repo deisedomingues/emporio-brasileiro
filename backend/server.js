@@ -2308,7 +2308,7 @@ app.use(
 );
 
 app.get("/", (_req, res) => {
-  res.redirect("/frontend/index.html");
+  res.sendFile(path.join(__dirname, "..", "index.html"));
 });
 
 // --------------------------------------------------
