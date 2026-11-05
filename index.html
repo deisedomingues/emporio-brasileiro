@@ -2,33 +2,21 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1"
-  >
-
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta
     name="description"
-    content="Conheça os destaques do Empório Brasileiro,
-    faça sua encomenda e sugira produtos."
+    content="Conheça os destaques do Empório Brasileiro, faça sua encomenda e sugira produtos."
   >
-
   <meta name="theme-color" content="#183f2e">
-
   <title>Empório Brasileiro — Seu mercadinho de bairro</title>
 
-  <link rel="stylesheet" href="css/estilo.css">
-
-  <script src="js/pagina-inicial.js" defer></script>
+  <link rel="stylesheet" href="./frontend/css/estilo.css">
+  <script src="./frontend/js/pagina-inicial.js" defer></script>
 </head>
 
 <body>
-  <a class="pular-conteudo" href="#conteudo">
-    Ir para o conteúdo
-  </a>
+  <a class="pular-conteudo" href="#conteudo">Ir para o conteúdo</a>
 
-  <!-- Faixa acima da barra de navegação -->
   <div class="faixa-superior">
     <div class="conteiner">
       <span>Seu mercadinho de bairro, desde 2002.</span>
@@ -36,19 +24,14 @@
     </div>
   </div>
 
-  <!-- Cabeçalho -->
   <header class="cabecalho">
     <div class="conteiner barra-navegacao">
-
       <a
         class="identidade"
         href="#inicio"
         aria-label="Empório Brasileiro — início"
       >
-        <!-- Aqui entrará sua logo -->
-        <span class="espaco-logo" aria-hidden="true">
-          LOGO
-        </span>
+        <span class="espaco-logo" aria-hidden="true">LOGO</span>
 
         <span class="nome-marca">
           Empório
@@ -63,8 +46,7 @@
         aria-expanded="false"
         aria-controls="navegacao-principal"
       >
-        Menu
-        <span aria-hidden="true">☰</span>
+        Menu <span aria-hidden="true">☰</span>
       </button>
 
       <nav
@@ -77,24 +59,20 @@
         <a href="#sugestoes">Sugerir produto</a>
         <a href="#contato">O Empório</a>
 
-        <a class="acesso-administrativo" href="/login.html">
+       <a class="acesso-administrativo" href="./frontend/login.html">
           Área administrativa ↗
         </a>
       </nav>
-
     </div>
   </header>
 
   <main id="conteudo">
-
-    <!-- Apresentação principal -->
     <section
       class="abertura conteiner"
       id="inicio"
       aria-labelledby="titulo-inicial"
     >
       <div class="texto-abertura">
-
         <p class="sobretitulo">
           <span class="ponto" aria-hidden="true"></span>
           Perto de casa. Perto de você.
@@ -121,10 +99,7 @@
             Encomendar pelo WhatsApp ↗
           </button>
 
-          <a
-            class="botao botao-secundario"
-            href="#destaques"
-          >
+          <a class="botao botao-secundario" href="#destaques">
             Ver destaques ↓
           </a>
         </div>
@@ -137,11 +112,9 @@
             Você combina tudo diretamente com o Sr. Alberto.
           </p>
         </div>
-
       </div>
 
       <div class="composicao-abertura">
-
         <div class="moldura-foto">
           <img
             src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&amp;fit=crop&amp;w=1200&amp;q=85"
@@ -171,11 +144,9 @@
             <strong>começa com uma conversa.</strong>
           </span>
         </div>
-
       </div>
     </section>
 
-    <!-- Faixa de benefícios -->
     <div class="faixa-valores">
       <div class="conteiner">
         <span>Compras do dia a dia</span>
@@ -186,7 +157,6 @@
       </div>
     </div>
 
-    <!-- Produtos escolhidos para a vitrine -->
     <section
       class="secao conteiner"
       id="destaques"
@@ -209,7 +179,6 @@
       </div>
 
       <div class="linha-filtros">
-
         <div
           class="filtros"
           role="group"
@@ -255,7 +224,6 @@
         <span class="aviso-previa">Seleção do Empório</span>
       </div>
 
-      <!-- O JavaScript coloca os produtos aqui -->
       <div class="grade-produtos" id="grade-produtos"></div>
 
       <p
@@ -277,14 +245,12 @@
       </div>
     </section>
 
-    <!-- Explicação das encomendas -->
     <section
       class="faixa-encomenda"
       id="como-encomendar"
       aria-labelledby="titulo-encomenda"
     >
       <div class="conteiner">
-
         <div class="cabecalho-secao">
           <div>
             <p class="sobretitulo">Simples, como uma conversa</p>
@@ -302,7 +268,6 @@
         </div>
 
         <div class="etapas">
-
           <article>
             <span class="numero-etapa">01</span>
             <h3>Conte o que precisa</h3>
@@ -332,7 +297,6 @@
               no dia e horário combinados.
             </p>
           </article>
-
         </div>
 
         <button
@@ -342,20 +306,16 @@
         >
           Conversar sobre uma encomenda ↗
         </button>
-
       </div>
     </section>
 
-    <!-- Formulário público de sugestões -->
     <section
       class="secao conteiner secao-sugestoes"
       id="sugestoes"
       aria-labelledby="titulo-sugestoes"
     >
       <div class="texto-sugestoes">
-        <p class="sobretitulo">
-          Sua ideia pode chegar à prateleira
-        </p>
+        <p class="sobretitulo">Sua ideia pode chegar à prateleira</p>
 
         <h2 id="titulo-sugestoes">
           O que você gostaria<br>
@@ -388,14 +348,12 @@
         </p>
       </div>
 
-      <form
-        class="formulario-sugestao"
-        id="formulario-sugestao"
-      >
+      <form class="formulario-sugestao" id="formulario-sugestao">
         <h3>Deixe sua sugestão</h3>
 
         <p class="aviso-formulario">
-          Sua sugestão será enviada ao Empório. Sugerir não garante disponibilidade imediata.
+          Sua sugestão será enviada ao Empório. Sugerir não garante
+          disponibilidade imediata.
         </p>
 
         <div class="campo">
@@ -437,12 +395,8 @@
             <option value="conhecer">
               Gostaria de conhecer as opções
             </option>
-
             <option value="sim">Sim</option>
-
-            <option value="nao">
-              Não, prefiro a marca indicada
-            </option>
+            <option value="nao">Não, prefiro a marca indicada</option>
           </select>
         </div>
 
@@ -457,7 +411,6 @@
         </label>
 
         <div id="campos-contato" hidden>
-
           <div class="campo">
             <label for="nome-cliente">Seu nome *</label>
 
@@ -493,13 +446,9 @@
             O contato informado será usado para conversar
             sobre esta sugestão.
           </p>
-
         </div>
 
-        <button
-          class="botao botao-primario botao-largo"
-          type="submit"
-        >
+        <button class="botao botao-primario botao-largo" type="submit">
           Enviar sugestão ↗
         </button>
 
@@ -512,18 +461,14 @@
       </form>
     </section>
 
-    <!-- Apresentação e informações da loja -->
     <section
       class="secao-contato"
       id="contato"
       aria-labelledby="titulo-contato"
     >
       <div class="conteiner grade-contato">
-
         <div>
-          <p class="sobretitulo">
-            Comércio de bairro, de verdade
-          </p>
+          <p class="sobretitulo">Comércio de bairro, de verdade</p>
 
           <h2 id="titulo-contato">
             Empório Brasileiro.<br>
@@ -546,35 +491,24 @@
         </div>
 
         <div class="informacoes-loja">
-
           <div>
             <span class="rotulo-contato">ONDE ESTAMOS</span>
             <p id="endereco-loja">São Paulo · SP</p>
 
-            <span
-              class="texto-apoio"
-              id="complemento-endereco"
-            >
+            <span class="texto-apoio" id="complemento-endereco">
               Endereço completo a confirmar.
             </span>
           </div>
 
           <div>
-            <span class="rotulo-contato">
-              HORÁRIO DE ATENDIMENTO
-            </span>
-
+            <span class="rotulo-contato">HORÁRIO DE ATENDIMENTO</span>
             <p id="horario-loja">Horários a confirmar.</p>
           </div>
 
           <div>
             <span class="rotulo-contato">ATENDIMENTO</span>
-
-            <p>
-              Converse com o Sr. Alberto pelo WhatsApp.
-            </p>
+            <p>Converse com o Sr. Alberto pelo WhatsApp.</p>
           </div>
-
         </div>
       </div>
     </section>
@@ -587,7 +521,6 @@
     </div>
   </footer>
 
-  <!-- Janela reutilizável para avisos -->
   <dialog
     class="janela-aviso"
     id="janela-aviso"
@@ -595,7 +528,6 @@
     aria-describedby="texto-aviso"
   >
     <div class="conteudo-janela">
-
       <button
         class="botao-fechar"
         id="fechar-aviso"
@@ -617,7 +549,6 @@
       >
         Entendi
       </button>
-
     </div>
   </dialog>
 </body>
