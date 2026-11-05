@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
+
+  <title>Avaliar produto | Empório Brasileiro</title>
+
+  <link
+    rel="stylesheet"
+    href="../frontend/css/estilo.css"
+  >
+
+  <link rel="stylesheet" href="admin.css">
+  <link rel="stylesheet" href="especialista.css">
+
+  <script src="especialista.js" defer></script>
+</head>
+
+<body class="admin-body">
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <a class="admin-brand" href="index.html">
+        Empório Brasileiro
+        <small>ADMINISTRAÇÃO</small>
+      </a>
+
+      <nav class="admin-nav" aria-label="Menu administrativo">
+        <a href="index.html">Painel</a>
+        <a href="encomendas.html">Encomendas</a>
+        <a href="vendas.html">Vendas</a>
+        <a href="produtos.html">Produtos</a>
+        <a href="compras.html">Compras / Entradas</a>
+        <a href="fornecedores.html">Fornecedores</a>
+        <a href="categorias.html">Categorias</a>
+        <a href="sugestoes.html">Sugestões</a>
+
+        <a
+          href="especialista.html"
+          class="ativo"
+          aria-current="page"
+        >
+          Avaliar produto
+        </a>
+      </nav>
+
+      <button
+        type="button"
+        id="sair"
+        class="botao botao-secundario se-sair"
+      >
+        Sair da administração
+      </button>
+    </aside>
+
+    <main class="admin-main">
+      <header class="admin-topbar">
+        <span class="admin-eyebrow">Gestão do Empório</span>
+
+        <span class="admin-badge">
+          Ambiente de desenvolvimento
+        </span>
+      </header>
+
+      <section class="admin-page-heading">
+        <div>
+          <span class="admin-eyebrow">Sistema especialista</span>
+
+          <h1>Avaliar produto</h1>
+
+          <p>
+            Responda às perguntas para receber uma orientação
+            de compra com justificativa.
+          </p>
+        </div>
+
+        <a
+          href="sugestoes.html"
+          class="botao botao-secundario"
+        >
+          Consultar sugestões
+        </a>
+      </section>
+
+      <p class="admin-notice">
+        As regras desta versão são propostas para validação
+        com o Sr. Alberto. A decisão final de compra é dele.
+      </p>
+
+      <p id="carregamento" role="status">
+        Carregando...
+      </p>
+
+      <form id="form-avaliacao" hidden>
+        <section class="admin-card">
+          <h2>Produto a avaliar</h2>
+
+          <div class="se-campo">
+            <label for="sugestao">
+              Sugestão recebida — opcional
+            </label>
+
+            <select id="sugestao">
+              <option value="">
+                Informar produto manualmente
+              </option>
+            </select>
+          </div>
+
+          <div class="se-campo">
+            <label for="produto">Produto *</label>
+
+            <input
+              id="produto"
+              type="text"
+              maxlength="120"
+              placeholder="Nome do produto"
+              required
+            >
+          </div>
+
+          <p id="demanda" class="se-ajuda"></p>
+        </section>
+
+        <section class="admin-card">
+          <h2>Condições de compra</h2>
+
+          <p class="se-ajuda">
+            Se não souber alguma resposta, confirme a informação
+            antes de avaliar.
+          </p>
+
+          <div id="perguntas"></div>
+        </section>
+
+        <div class="se-acoes">
+          <button
+            id="avaliar"
+            type="submit"
+            class="botao botao-primario"
+          >
+            Gerar recomendação
+          </button>
+
+          <button
+            type="reset"
+            class="botao botao-secundario"
+          >
+            Limpar
+          </button>
+        </div>
+      </form>
+
+      <p
+        id="mensagem"
+        class="se-mensagem"
+        role="status"
+        aria-live="polite"
+      ></p>
+
+      <section
+        id="resultado"
+        class="admin-card se-resultado"
+        tabindex="-1"
+        aria-labelledby="resultado-titulo"
+        hidden
+      >
+        <span class="admin-eyebrow">Recomendação</span>
+
+        <h2 id="resultado-titulo"></h2>
+
+        <p id="resultado-produto" class="se-produto"></p>
+        <p id="resultado-motivo"></p>
+
+        <details>
+          <summary>Ver explicação e respostas</summary>
+
+          <p id="regra-final"></p>
+
+          <h3>Passos da análise</h3>
+          <ul id="passos"></ul>
+
+          <h3>Respostas utilizadas</h3>
+          <ul id="respostas"></ul>
+        </details>
+
+        <p id="situacao-avaliacao" class="se-ajuda">
+          Esta avaliação ainda não foi salva.
+        </p>
+
+        <button
+          id="salvar"
+          type="button"
+          class="botao botao-primario"
+        >
+          Salvar avaliação
+        </button>
+      </section>
+
+      <section class="admin-card">
+        <div class="se-historico-cabecalho">
+          <h2>Últimas avaliações salvas</h2>
+
+          <button
+            id="atualizar-historico"
+            type="button"
+            class="botao botao-secundario"
+          >
+            Atualizar
+          </button>
+        </div>
+
+        <p class="se-ajuda">
+          São exibidas até 50 avaliações recentes.
+          Salvar uma avaliação não registra uma compra
+          nem altera a situação da sugestão.
+        </p>
+
+        <div id="historico" aria-live="polite">
+          Carregando histórico...
+        </div>
+      </section>
+
+      <noscript>
+        Ative o JavaScript do navegador para utilizar esta página.
+      </noscript>
+    </main>
+  </div>
+</body>
+</html>

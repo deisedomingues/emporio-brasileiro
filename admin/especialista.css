@@ -1,0 +1,203 @@
+/* Sistema especialista — complementa o visual do admin. */
+
+[hidden] {
+  display: none !important;
+}
+
+.se-sair {
+  margin: 20px 12px;
+  width: calc(100% - 24px);
+}
+
+.se-campo {
+  margin-bottom: 20px;
+}
+
+.se-campo > label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.se-campo input,
+.se-campo select {
+  display: block;
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 14px;
+  border: 1px solid var(--cor-borda, #d5dfd5);
+  border-radius: 8px;
+  background: white;
+  color: var(--cor-texto, #19382c);
+  font: inherit;
+  font-size: 16px;
+}
+
+.se-ajuda {
+  color: var(--cor-texto-suave, #536457);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+#perguntas fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 18px 0;
+  border: 0;
+  border-bottom: 1px solid var(--cor-borda, #d5dfd5);
+}
+
+#perguntas fieldset:last-child {
+  border-bottom: 0;
+}
+
+#perguntas legend {
+  width: 100%;
+  padding: 12px 0 0;
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.se-opcoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-top: 12px;
+}
+
+.se-opcao {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 46px;
+  padding: 10px 20px;
+  border: 1px solid var(--cor-borda, #d5dfd5);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.se-opcao:has(input:checked) {
+  background: var(--cor-fundo-suave, #eff5e9);
+  border-color: var(--cor-primaria, #245e3e);
+}
+
+.se-opcao input[type="radio"] {
+  width: 21px;
+  height: 21px;
+  min-height: 21px;
+  margin: 0;
+  accent-color: var(--cor-primaria, #245e3e);
+}
+
+.se-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 22px 0;
+}
+
+.se-mensagem {
+  margin: 18px 0;
+  line-height: 1.6;
+}
+
+.se-resultado {
+  border-top: 4px solid var(--cor-primaria, #245e3e);
+  overflow-wrap: anywhere;
+}
+
+.se-resultado h2 {
+  margin-top: 12px;
+}
+
+.se-produto {
+  margin-bottom: 12px;
+  font-weight: 700;
+}
+
+.se-resultado details {
+  margin: 22px 0;
+}
+
+.se-resultado summary,
+.se-registro summary {
+  cursor: pointer;
+  font-weight: 600;
+  line-height: 1.6;
+}
+
+.se-resultado h3,
+.se-registro h3 {
+  margin-top: 20px;
+  margin-bottom: 10px;
+  font-size: 17px;
+}
+
+.se-resultado ul,
+.se-registro ul {
+  padding-left: 24px;
+}
+
+.se-resultado li,
+.se-registro li {
+  margin: 9px 0;
+  line-height: 1.6;
+}
+
+.se-historico-cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.se-historico-cabecalho h2 {
+  margin-bottom: 0;
+}
+
+.se-registro {
+  padding: 18px 0;
+  border-bottom: 1px solid var(--cor-borda, #d5dfd5);
+  overflow-wrap: anywhere;
+}
+
+.se-registro:last-child {
+  border-bottom: 0;
+}
+
+.se-registro p {
+  margin: 12px 0;
+}
+
+button:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+
+.se-campo input:focus-visible,
+.se-campo select:focus-visible,
+.se-opcao input:focus-visible,
+.se-resultado summary:focus-visible,
+.se-registro summary:focus-visible {
+  outline: 3px solid #ad851f;
+  outline-offset: 4px;
+}
+
+@media (max-width: 600px) {
+  .se-acoes .botao,
+  .se-historico-cabecalho .botao {
+    width: 100%;
+  }
+
+  .se-opcoes {
+    gap: 10px;
+  }
+
+  .se-opcao {
+    flex: 1;
+    justify-content: center;
+  }
+}
